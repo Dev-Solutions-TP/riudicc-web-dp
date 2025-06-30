@@ -4,6 +4,15 @@
 
 @plugin "daisyui";
 
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("/assets/fonts/Montserrat/Montserrat-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
@@ -53,7 +62,6 @@
 }
 
 @theme {
-    /* --font-montserrat: "Montserrat", "sans-serif"; */
     --font-montserrat: "Montserrat", "sans-serif";
     --animate-fadeIn: fadeIn 0.3s ease-in-out;
 
@@ -66,9 +74,4 @@
             opacity: 1;
         }
     }
-}
-
-@font-face {
-    font-family: "Montserrat";
-    src: url('/public/assets/fonts/Montserrat/Montserrat-Medium.ttf') format("truetype");
 }

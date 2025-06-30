@@ -5,7 +5,7 @@
         class="cursor-pointer hover:shadow-xl shadow-sm transition-shadow duration-300 rounded-xl bg-transparent"
         [routerLink]="['/news', noticia().slug]"
     >
-        <div class="hidden md:flex card card-side bg-base-200 hover:shadow-xl rounded-xl h-75">
+        <div class="hidden md:flex card card-side bg-base-100 hover:shadow-xl rounded-xl h-75">
             @if(noticia().images && noticia().images.length > 0) {
             <figure class=" w-[30%] h-full flex items-center justify-center bg-white">
                 <img
@@ -65,15 +65,15 @@
         </div>
 
         <!-- Versión vertical para móvil -->
-        <div class="flex md:hidden card bg-base-200 rounded-xl">
+        <div class="flex md:hidden card bg-base-100 rounded-xl">
             @if(noticia().images && noticia().images.length > 0) {
 
             <figure class="cursor-pointer">
                 <a [routerLink]="['/news', noticia().slug]">
 
                     <img
-                        [src]="noticia().images |  imageNamePipe: 'not'"
-                        [alt]="traduccion().contentDescription"
+                        [src]="imagenPrincipal() |  imageNamePipe: 'not'"
+                        [alt]="imagenPrincipal()?.altText || traduccion().contentDescription"
                     >
                 </a>
             </figure>

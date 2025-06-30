@@ -13,22 +13,15 @@ import { BlogComponent } from "../../components/NewsBlog/news-blog.component";
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink, HomeCarouselComponent, BlogComponent],
+  imports: [RouterLink, BlogComponent],
   templateUrl: './home-page.component.html',
 })
 export class HomePageComponent {
 
   private currentLocale = signal(inject(LOCALE_ID));
 
-  private bannersService = inject(BannersService);
   private noticiasService = inject(NoticiasService);
 
-  bannersResponse = rxResource({
-    request: () => ({}),
-    loader: ({ request }) => {
-      return this.bannersService.getBanners({});
-    }
-  });
 
 
   noticiasResponse = rxResource({

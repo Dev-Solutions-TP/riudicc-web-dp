@@ -1,22 +1,24 @@
 <main class="m-auto flex-grow flex flex-col min-h-screen pt-16">
 
     <home-navbar></home-navbar>
-    <!-- @if(router.url === '/') {
-    <div class="animate-fadeIn">
-        <img
-            src="assets/images/riudicc/portada.png"
-            alt="RIUDICC Portada"
-            class="w-full h-auto object-cover"
-        />
-    </div>
-    } -->
+    @if (isHome()) {
+    <section
+        aria-labelledby="
+            banners-section"
+        class="w-full px-0 py-0"
+    >
+        @if (bannersResponse.hasValue()) {
+        <home-carousel [banners]="bannersResponse.value().items"></home-carousel>
+        }
+    </section>
+    }
+
 
     <section class="container mx-auto">
         <section class="container mx-auto px-8  md:px-10  py-8">
             <router-outlet></router-outlet>
         </section>
     </section>
-
     <div class="flex-1 flex-grow"></div>
     <div class="mt-30">
         <app-footer></app-footer>

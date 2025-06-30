@@ -87,12 +87,13 @@ export class NoticiaCarouselComponent implements AfterViewInit {
         direction: 'horizontal',
         spaceBetween: 10,
         modules: [Navigation, Pagination, Thumbs],
-        slidesPerView: 4,
+        slidesPerView: 2,
         breakpoints: {
-          640: { slidesPerView: 5 },
-          768: { slidesPerView: 6 },
-          1024: { slidesPerView: 8 },
+          640: { slidesPerView: 4 },
+          768: { slidesPerView: 5 },
+          1024: { slidesPerView: 6 },
         },
+
 
         pagination: {
           el: '.swiper-pagination',
