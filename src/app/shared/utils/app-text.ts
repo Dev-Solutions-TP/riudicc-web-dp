@@ -67,5 +67,17 @@ export const AppText = {
             fr: 'Découvrez la structure et les objectifs stratégiques du projet RIUDICC à travers ses paquets de travail (WPs). Chaque WP définit les responsabilités, les livrables, et les jalons visant à atteindre une collaboration internationale inclusive dans l\'enseignement supérieur.',
         }
 
+    },
+    ourProject: {
+        titleAux: {
+            es: '¡Estamos trabajando en nuestros proyectos!',
+            en: 'We are working on our projects!',
+            fr: 'Nous travaillons sur nos projets !',
+        },
+        descriptionAux: {
+            es: 'Espéralos muy pronto. Pronto compartiremos más información sobre los proyectos en los que estamos trabajando.',
+            en: 'Stay tuned. We will share more information about the projects we are working on soon.',
+            fr: `Restez à l\'écoute. Nous partagerons bientôt plus d'informations sur les projets sur lesquels nous travaillons.`,
+        }
     }
 } satisfies Record<string, Record<string, AppTextEntry>>;
