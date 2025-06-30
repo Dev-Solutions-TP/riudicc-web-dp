@@ -27,7 +27,7 @@ export class InstitucionPageViewComponent {
     getImagenPrincipal(this.institucion);
 
   abrirEnlace = abrirEnlace;
-  getCountryCode = getCountryCode;
+
 
 
 

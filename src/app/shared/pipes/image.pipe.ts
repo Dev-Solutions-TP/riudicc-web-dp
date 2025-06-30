@@ -6,41 +6,35 @@ const API_URL = environment.baseUrl;
 
 @Pipe({
     name: 'imageNamePipe',
-
 })
-
 export class ImageNamePipe implements PipeTransform {
-    transform(value: string | ImageEntity | ImageEntity[], path: string): any {
+    transform(value: string | ImageEntity | ImageEntity[] | null | undefined, path: string): string {
         // 🛑 Si no hay valor
         if (!value) {
-            return `./assets/images/no-image.jpg`;
+            return './assets/images/no-image.jpg';
         }
 
-        // ✅ Si es string
+        // ✅ Si es string (ej. solo el nombre del archivo)
         if (typeof value === 'string') {
             return `${API_URL}/files/${path}/${value}`;
         }
 
-        // ✅ Si es un objeto único
+        // ✅ Si es un objeto único con url
         if (this.isImageEntity(value)) {
             return `${API_URL}/files/${path}/${value.url}`;
         }
 
         // ✅ Si es un arreglo
         if (Array.isArray(value)) {
-            const image = value.at(0);
-            if (!image || !this.isImageEntity(image)) {
-                return `./assets/images/no-image.jpg`;
-            }
-            return `${API_URL}/files/${path}/${image.url}`;
+            const image = value.find(this.isImageEntity); // toma el primero válido
+            return image ? `${API_URL}/files/${path}/${image.url}` : './assets/images/no-image.jpg';
         }
 
         // 🛑 Valor no reconocido
-        return `./assets/images/no-image.jpg`;
+        return './assets/images/no-image.jpg';
     }
 
-
     private isImageEntity(obj: any): obj is ImageEntity {
-        return obj && typeof obj === 'object' && 'url' in obj;
+        return obj && typeof obj === 'object' && typeof obj.url === 'string';
     }
 }

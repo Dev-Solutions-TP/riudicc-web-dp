@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 
 import { LocalizationService } from '@shared/services/localization.service';
 import { DatePipe } from '@angular/common';
+import { ImageNamePipe } from '@shared/pipes/image.pipe';
 
 @Component({
   selector: 'noticia-card',
-  imports: [RouterLink, NoticiaImagePipe, DatePipe],
+  imports: [RouterLink, DatePipe, ImageNamePipe],
   templateUrl: './noticia-card.component.html',
 })
 export class NoticiaCardComponent {
@@ -33,14 +34,11 @@ export class NoticiaCardComponent {
   });
 
   imagenPrincipal = computed(() => {
-
-    console.log('NoticiaCardComponent.slug', this.noticia().slug);
-    console.log('NoticiaCardComponent notiicias', this.noticia().images);
-
-    console.log('NoticiaCardComponent.imagenPrincipal', this.noticia().images?.[0]);
-
-
-    return this.noticia().images?.[0];
+    const imagenes = this.noticia().images ?? [];
+    // Si alguna tiene orden = 1, úsala
+    const conOrden1 = imagenes.find(img => img.orden === 1);
+    // Si no, toma la primera válida
+    return conOrden1 ?? imagenes.at(0);
   });
 
   viewMoreText = this.lang.viewMoreText;

@@ -6,19 +6,29 @@
         <!-- Card horizontal (desktop y tablet) -->
         <div class=" hidden md:flex card card-side bg-base-100 shadow-sm w-full h-60">
             <!-- Imagen al 30% del ancho -->
-            <figure class="w-[30%] h-full flex items-center justify-center bg-white">
+            <!-- <figure class="w-[30%] h-full flex items-center justify-center bg-white">
                 <img
                     [src]="institucion().images | institucionImagePipe"
                     [alt]="imagenPrincipal()?.altText || traduccion()?.description"
                     class="h-full w-full object-contain p-4"
                 >
+            </figure> -->
+
+            <figure class="w-[35%] h-full flex items-center justify-center bg-white">
+                <div class="w-full h-full aspect-square flex items-center justify-center pl-4">
+                    <img
+                        [src]="institucion().images | institucionImagePipe"
+                        [alt]="imagenPrincipal()?.altText || traduccion()?.description"
+                        class="max-w-full max-h-full object-contain"
+                    >
+                </div>
             </figure>
 
             <!-- Espaciado del 5% antes del texto -->
-            <div class=" w-[5%]"></div>
+            <!-- <div class=" w-[5%]"></div> -->
 
             <!-- Texto ocupa el resto -->
-            <div class="card-body w-[65%] p-4 flex flex-col justify-between">
+            <div class="card-body w-[65%] flex flex-col  justify-between">
                 <div>
                     <h2
                         class="card-title font-montserrat text-black hover:underline cursor-pointer"
@@ -48,23 +58,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-actions justify-end">
-                    <!-- <button
-                    class="btn btn-primary"
-                    [attr.href]="institucion().enlaces[0].url"
-                    (click)="abrirEnlace(institucion().enlaces[0].url)"
-                    type="button"
-                >
-                    More -->
-                    <!-- </button> -->
-                    <button
-                        class="btn btn-primary"
-                        [routerLink]="['/partners', institucion().slug]"
-                        type="button"
-                    >
-                        {{viewMoreText()}}
-                    </button>
-                </div>
+
             </div>
         </div>
         <!-- Card vertical (móvil) -->

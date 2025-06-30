@@ -17,8 +17,11 @@ export class NoticiasPageComponent {
 
 
   noticiasResponse = rxResource({
-    request: () => ({ limit: 10, offset: 0 }),
-    loader: ({ request }) => this.noticiasService.getNoticias(request),
+    request: () => ({ limit: 2, offset: 0 }),
+    loader: ({ request }) => {
+      console.log
+      return this.noticiasService.getNoticias(request);
+    }
   });
 
 

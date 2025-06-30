@@ -30,7 +30,7 @@
                 #thumbsDiv
             >
                 <div class="swiper-wrapper">
-                    @for (image of images(); track $index) {
+                    @for (image of images(); track image.url) {
                     <div
                         class="swiper-slide p-1 cursor-pointer"
                         (click)="setSelected(image)"

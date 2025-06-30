@@ -26,20 +26,24 @@
 >
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         @for (wp of workPackages(); track wp.wpNumber) {
-        <div class="card bg-base-100 shadow-md hover:shadow-xl transition">
-            <div class="card-body">
-                <h3 class="text-xl font-semibold text-primary">{{ wp.wpNumber }} - {{ getWorkPackageDescription(wp).name
-                    }}</h3>
-                <p class="text-sm text-gray-500">{{leadText()}} {{ wp.lead }}</p>
+        <div class="animate-fadeIn">
+            <div class="card bg-base-100 shadow-md hover:shadow-xl transition">
+                <div class="card-body">
+                    <h3 class="text-xl font-semibold text-primary">{{ wp.wpNumber }} - {{
+                        getWorkPackageDescription(wp).name
+                        }}</h3>
+                    <p class="text-sm text-gray-500">{{leadText()}} {{ wp.lead }}</p>
 
 
-                <p class="text-sm text-gray-500">{{durationText()}} : Month {{ wp.startMonth }} to {{ wp.endMonth }}</p>
-                <!-- <p class="text-sm text-gray-500">Effort: {{ wp.effort }} person-months</p> -->
-                <ul class="mt-2 list-disc list-inside text-gray-600 text-sm">
-                    @for (d of getWorkPackageDescription(wp).deliverables; track d) {
-                    <li>{{ d }}</li>
-                    }
-                </ul>
+                    <p class="text-sm text-gray-500">{{durationText()}} : Month {{ wp.startMonth }} to {{ wp.endMonth }}
+                    </p>
+                    <!-- <p class="text-sm text-gray-500">Effort: {{ wp.effort }} person-months</p> -->
+                    <ul class="mt-2 list-disc list-inside text-gray-600 text-sm">
+                        @for (d of getWorkPackageDescription(wp).deliverables; track d) {
+                        <li>{{ d }}</li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
         }

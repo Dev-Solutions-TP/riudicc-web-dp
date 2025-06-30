@@ -18,7 +18,6 @@ export class InstitucionCardComponent {
 
   constructor() { }
 
-  private locale = signal(inject(LOCALE_ID));
   private lang = inject(LocalizationService);
 
 
@@ -41,16 +40,7 @@ export class InstitucionCardComponent {
     window.open(url, '_blank');
   }
 
-  getCountryCode(pais: string): string {
-    const mapping: Record<string, string> = {
-      'Ecuador': 'ec',
-      'México': 'mx',
-      'Dominican Republic': 'do',
-      'España': 'es',
-    };
 
-    return mapping[pais.trim()]?.toLowerCase() || 'un'; // 'un' fallback = unknown
-  }
 
   viewMoreText = this.lang.viewMoreText;
   showMapText = this.lang.showMapText;

@@ -9,8 +9,8 @@
             @if(noticia().images && noticia().images.length > 0) {
             <figure class=" w-[30%] h-full flex items-center justify-center bg-white">
                 <img
-                    [src]="noticia().images | noticiaImagePipe"
-                    [alt]="imagenPrincipal().altText || traduccion().contentDescription"
+                    [src]="imagenPrincipal() |  imageNamePipe: 'not'"
+                    [alt]="imagenPrincipal()?.altText || traduccion().contentDescription"
                     class="h-full w-full object-cover"
                 >
 
@@ -72,7 +72,7 @@
                 <a [routerLink]="['/news', noticia().slug]">
 
                     <img
-                        [src]="noticia().images | noticiaImagePipe"
+                        [src]="noticia().images |  imageNamePipe: 'not'"
                         [alt]="traduccion().contentDescription"
                     >
                 </a>
