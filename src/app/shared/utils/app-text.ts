@@ -79,5 +79,33 @@ export const AppText = {
             en: 'Stay tuned. We will share more information about the projects we are working on soon.',
             fr: `Restez à l\'écoute. Nous partagerons bientôt plus d'informations sur les projets sur lesquels nous travaillons.`,
         }
+    },
+    instituciones: {
+        title: {
+            es: 'Socios',
+            en: 'Strategic',
+            fr: 'Partenaires',
+        },
+        socio: {
+            es: 'Socio',
+            en: 'Partner',
+            fr: 'Partenaire',
+        },
+        subtitle: {
+            es: 'Estratégicos',
+            en: 'Partners',
+            fr: 'Stratégiques',
+        },
+        asociadsos: {
+            es: 'Asociados',
+            en: 'Affiliates',
+            fr: 'Associés',
+        },
+        asociado: {
+            es: 'Asociado',
+            en: 'Affiliate',
+            fr: 'Associé',
+        }
+
     }
 } satisfies Record<string, Record<string, AppTextEntry>>;

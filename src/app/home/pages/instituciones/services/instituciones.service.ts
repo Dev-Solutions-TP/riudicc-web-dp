@@ -61,6 +61,15 @@ export class InstitucionesService {
         });
     }
 
+    getInstitucionesAsociadas(option: Options): Observable<InstitucionResponse> {
+
+        const { limit = 100, offset = 0 } = option;
+
+        return this.http.get<InstitucionResponse>(`${API_URL}/instituciones/asociados/public`, {
+            params: { limit, offset },
+        });
+    }
+
     getInstitucionesUsers(option: Options): Observable<InstitucionResponse> {
 
         const { limit = 9, offset = 0 } = option;

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { InstitucionesTableComponent } from '@home/pages/instituciones/components/instituciones-table/instituciones-table.component';
+import { InstitucionesTableComponent } from '@dashboard/pages/instituciones-admin-page/instituciones-table/instituciones-table.component';
 import { InstitucionesService } from '@home/pages/instituciones/services/instituciones.service';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';

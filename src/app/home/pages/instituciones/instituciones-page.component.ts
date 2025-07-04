@@ -4,6 +4,8 @@ import { PageTitleComponent } from "../../components/page-title/page-title.compo
 import { InstitucionesService } from './services/instituciones.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { InstitucionCardComponent } from "./components/project-card/institucion-card.component";
+import { LocalizationService } from '@shared/services/localization.service';
+import { AppText } from '@shared/utils/app-text';
 
 @Component({
   selector: 'app-aliados',
@@ -16,6 +18,12 @@ export class InstitucionesPageComponent {
 
   private institucionesServer = inject(InstitucionesService);
 
+  private lang = inject(LocalizationService);
+
+  asociados = this.lang.getText(AppText.instituciones.asociadsos);
+  title = this.lang.getText(AppText.instituciones.title);
+  subtitle = this.lang.getText(AppText.instituciones.subtitle);
+
 
 
   institucionesResponse = rxResource({
@@ -27,30 +35,19 @@ export class InstitucionesPageComponent {
   });
 
 
-
-  sociosTitleText: Record<'es' | 'en' | 'fr', string> = {
-    es: 'Socios',
-    en: 'Strategic',
-    fr: 'Partenaires',
-  };
-
-  firstWord = computed(() => {
-    const locale = this.currentLocale() as 'es' | 'en' | 'fr';
-    return this.sociosTitleText[locale] ?? 'News';
+  institucionesAsociadasResponse = rxResource({
+    request: () => ({}),
+    loader: ({ request }) => {
+      console.log('Loading instituciones asociadas');
+      console.log('request', request);
+      return this.institucionesServer.getInstitucionesAsociadas({});
+    }
   });
 
 
 
-  estrategicosTitleText: Record<'es' | 'en' | 'fr', string> = {
-    es: 'Estratégicos',
-    en: 'Partners',
-    fr: 'Stratégiques',
-  };
 
-  secondWord = computed(() => {
-    const locale = this.currentLocale() as 'es' | 'en' | 'fr';
-    return this.estrategicosTitleText[locale] ?? 'News';
-  });
+
 
 }
 

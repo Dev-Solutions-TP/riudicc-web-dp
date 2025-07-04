@@ -1,6 +1,6 @@
 <page-title
-    firstWord="{{firstWord()}}"
-    secondWord="{{secondWord()}}"
+    firstWord="{{title()}}"
+    secondWord="{{subtitle()}}"
 ></page-title>
 
 
@@ -20,5 +20,42 @@
     @empty {
     <p>No data loaded yet.</p>
     }
+    }
+</div>
+
+<div class=" max-w-[100rem] px-4 md:px-20 mt-20">
+
+    @if (institucionesAsociadasResponse.hasValue()) {
+
+    <!-- 
+    <span class="block text-2xl md:text-3xl font-bold text-[clamp(2rem,8vw,4rem)] ">
+        {{ asociados() }}
+    </span>
+     -->
+    <div>
+
+        <h2
+            id="news-title"
+            class="   text-left font-['Roboto'] tracking-wide"
+        >
+            <span class="block text-2xl md:text-4xl font-light font-title">
+                {{asociados()}}
+            </span>
+        </h2>
+        <hr class="mb-6 md:mb-10 border-t border-gray-300">
+    </div>
+    }
+</div>
+<div class="  max-w-[100rem] px-4 md:px-20  grid grid-cols-1 lg:grid-cols-2  mt-2 gap-10 ">
+
+    @if (institucionesAsociadasResponse.hasValue()) {
+    <div class="flex flex-col gap-4 w-full">
+
+        <div class="flex flex-col gap-4">
+            @for (institucion of institucionesAsociadasResponse.value().items; track $index) {
+            <institucion-card [institucion]="institucion"></institucion-card>
+            }
+        </div>
+    </div>
     }
 </div>

@@ -1,8 +1,8 @@
 import { Component, inject, input, LOCALE_ID, signal } from '@angular/core';
-import { InstitucionEntity, InstitucionResponse } from '../../interfaces/aliados.interface';
+import { InstitucionEntity, InstitucionResponse } from '../../../../home/pages/instituciones/interfaces/aliados.interface';
 import { LocalizationService } from '@shared/services/localization.service';
 import { AppText } from '@shared/utils/app-text';
-import { ImageNamePipe } from "../../../../../shared/pipes/image.pipe";
+import { ImageNamePipe } from "../../../../shared/pipes/image.pipe";
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
