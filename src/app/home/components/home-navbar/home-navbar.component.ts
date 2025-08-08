@@ -21,6 +21,7 @@ export class HomeNavbarComponent {
   homeRoutes = extractRoutes(homeRoutes);
 
   // Inyecta el servicio
+
   localeService = inject(LocaleService);
   private lang = inject(LocalizationService);
 
@@ -37,6 +38,14 @@ export class HomeNavbarComponent {
   getTitle(key: string) {
     const locale = this.localeService.getLocale;
     return ROUTE_TITLES[key]?.[locale] ?? key;
+  }
+
+
+  // Puedes mapear las rutas aquí si quieres cambiar los nombres fácilmente
+  get coFoundedImg() {
+    return this.localeService.getLocale === 'es'
+      ? 'assets/images/eu/co-founded_es.png'
+      : 'assets/images/eu/co-founded_en.png';
   }
 }
 

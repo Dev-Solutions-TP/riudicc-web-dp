@@ -3,7 +3,9 @@
     class="fixed inset-x-0 top-0 z-30 flex flex-none items-center border-b border-secondary-100 bg-white/95 backdrop-blur-sm dark:border-secondary-800 dark:bg-secondary-900/90 "
 >
     <nav class="navbar bg-transparent shadow-xs  justify-center items-center py-2 md:px-10 px-5 z-50 relative">
+        <!-- Bloque 1: navbar-start -->
         <div class="navbar-start">
+            <!-- Menú hamburguesa (solo móvil) -->
             <div class="dropdown">
                 <button
                     aria-label="button"
@@ -26,22 +28,36 @@
                         ></path>
                     </svg>
                 </button>
+                <!-- Menú desplegable -->
                 <ul class="menu dropdown-content menu-md z-50 mt-3 w-52 gap-2 rounded-box bg-base-100 p-2 shadow-sm">
-
-
                     @for (route of homeRoutes; track route.path) {
                     <li><a
                             [routerLink]="route.path"
                             routerLinkActive="text-info"
                             [routerLinkActiveOptions]="{ exact: true }"
-                            s
                             class="btn btn-ghost font-montserrat"
-                        > {{ getTitle(route.key) }}</a></li>
+                        >
+                            {{ getTitle(route.key) }}
+                        </a></li>
                     }
+                    <div class="divider my-0"></div>
+
+                    <div class="flex justify-center">
+                        <button
+                            class="btn btn-sm btn-ghost"
+                            (click)="toggleLocale()"
+                        >
+                            {{ localeService.getLocale | uppercase }}
+                            <span>
+                                @if (localeService.getLocale === 'es') { <span>🇪🇸</span> }
+                                @if (localeService.getLocale === 'en') { <span>🇬🇧</span> }
+                            </span>
+                        </button>
+                    </div>
                 </ul>
-
-
             </div>
+
+            <!-- Logo principal en desktop -->
             <a
                 class="hidden lg:flex"
                 routerLink="/"
@@ -49,49 +65,41 @@
                 <img
                     src="assets/images/riudicc/logo.png"
                     alt="RIUDICC Logo"
-                    class="h-15 w-auto"
+                    class="h-12 w-auto"
                 />
             </a>
         </div>
-        <div class="navbar-center flex lg:hidden">
+
+        <div class="navbar-center lg:hidden w-full flex justify-center items-center gap-4">
             <a routerLink="/">
                 <img
                     src="assets/images/riudicc/logo.png"
                     alt="RIUDICC Logo"
-                    class="h-15 w-auto"
+                    class="h-12 w-auto"
                 />
             </a>
+            <div>
+                <img
+                    [src]="coFoundedImg"
+                    alt="Co-funded by the European Union"
+                    class="h-9 w-auto"
+                    style="min-height: 40px; max-width: 350px;"
+                />
+            </div>
         </div>
+        <!-- Bloque 3: Menú principal en desktop -->
         <div class="navbar-center hidden lg:flex">
-
-
-            <!-- @for (route of homeRoutes; track route.path) {
-
-            <ul class="menu menu-horizontal px-1 ">
-                <a
-                    [routerLink]="route.path"
-                    routerLinkActive="text-info"
-                    [routerLinkActiveOptions]="{ exact: true }"
-                    class="hover:text-primary hover:bg-primary/10 transition flex py-2 px-4 rounded-md"
-                >
-                    {{getTitle(route.key)}}
-                </a>
-            </ul>
-            } -->
-
-            <ul class="menu menu-horizontal px-1 ">
+            <ul class="menu menu-horizontal px-1">
                 <a
                     routerLink=""
                     routerLinkActive="text-info"
                     [routerLinkActiveOptions]="{ exact: true }"
                     class="hover:text-primary hover:bg-primary/10 transition flex py-2 px-4 rounded-md"
                 >
-                    {{getTitle("home")}}
+                    {{ getTitle("home") }}
                 </a>
             </ul>
-
-            <ul class="menu menu-horizontal px-1 ">
-
+            <ul class="menu menu-horizontal px-1">
                 <a
                     [routerLink]="'news'"
                     routerLinkActive="text-info"
@@ -101,8 +109,7 @@
                     {{ getTitle("news") }}
                 </a>
             </ul>
-            <ul class="menu menu-horizontal px-1 ">
-
+            <ul class="menu menu-horizontal px-1">
                 <a
                     [routerLink]="'partners'"
                     routerLinkActive="text-info"
@@ -112,6 +119,8 @@
                     {{ getTitle("partners") }}
                 </a>
             </ul>
+
+            <!-- Dropdown "Acerca de" -->
             <div class="dropdown dropdown-end">
                 <div
                     tabindex="0"
@@ -138,59 +147,56 @@
                     tabindex="0"
                     class="menu dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                 >
-                    <li>
-                        <a
+                    <li><a
                             [routerLink]="'about'"
                             routerLinkActive="text-info"
                             [routerLinkActiveOptions]="{ exact: true }"
                             class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
                         >
                             {{ getTitle("about") }}
-                        </a>
-                    </li>
-                    <li>
-                        <a
+                        </a></li>
+                    <li><a
                             [routerLink]="'projects'"
                             routerLinkActive="text-info"
                             [routerLinkActiveOptions]="{ exact: true }"
                             class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
                         >
                             {{ getTitle("projects") }}
-                        </a>
-                    </li>
-                    <li>
-                        <a
+                        </a></li>
+                    <li><a
                             [routerLink]="'workPackages'"
                             routerLinkActive="text-info"
                             [routerLinkActiveOptions]="{ exact: true }"
                             class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
                         >
                             {{ getTitle("workPackages") }}
-                        </a>
-                    </li>
+                        </a></li>
                 </ul>
             </div>
 
-
-        </div>
-
-        <div class="navbar-end">
-
+            <!-- Botón idioma -->
             <button
                 class="btn btn-sm btn-outline rounded-lg"
                 (click)="toggleLocale()"
             >
                 {{ localeService.getLocale | uppercase }}
                 <span class="ml-2">
-                    @if (localeService.getLocale === 'es') {
-                    <!-- Ejemplo: emoji de bandera o SVG -->
-                    <span>🇪🇸</span>
-                    }
-                    @if (localeService.getLocale === 'en') {
-                    <span>🇬🇧</span>
-                    }
+                    @if (localeService.getLocale === 'es') { <span>🇪🇸</span> }
+                    @if (localeService.getLocale === 'en') { <span>🇬🇧</span> }
                 </span>
             </button>
+        </div>
+
+        <!-- Bloque 4: Logo UE en desktop -->
+        <div class="navbar-end hidden lg:flex">
+            <div>
+                <img
+                    [src]="coFoundedImg"
+                    alt="Co-funded by the European Union"
+                    class="h-9 max-w-full"
+                    style="min-height: 40px; max-width: 350px;"
+                />
+            </div>
         </div>
     </nav>
 </header>
