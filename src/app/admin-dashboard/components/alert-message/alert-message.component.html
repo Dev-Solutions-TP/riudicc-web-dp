@@ -1,0 +1,45 @@
+@if (show()) {
+<div
+    [class]="getAlertClass()"
+    class="mt-4 animate-in slide-in-from-bottom duration-300"
+>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="stroke-current shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+    >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            [attr.d]="getIcon()"
+        />
+    </svg>
+
+    <span>{{ message() }}</span>
+
+    @if (dismissible()) {
+    <button
+        class="btn btn-sm btn-ghost ml-auto"
+        (click)="close()"
+        aria-label="Cerrar alerta"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+            />
+        </svg>
+    </button>
+    }
+</div>
+}

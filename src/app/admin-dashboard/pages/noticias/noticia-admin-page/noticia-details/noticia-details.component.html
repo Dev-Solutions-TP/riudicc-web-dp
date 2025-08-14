@@ -118,12 +118,17 @@
       [formGroupName]="i"
     >
       <!-- Input de archivo -->
-      <input
-        type="file"
-        accept="image/*"
-        class="file-input file-input-bordered w-full"
-        (change)="onSingleImageSelected($event, i)"
-      />
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Seleccionar Imagen</span>
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          class="file-input file-input-bordered w-full"
+          (change)="onSingleImageSelected($event, i)"
+        />
+      </div>
 
       <!-- Vista previa -->
       @if (previewImageUrls()[i]) {
@@ -137,20 +142,32 @@
       }
 
       <!-- URL de la imagen -->
-      <input
-        type="text"
-        formControlName="url"
-        placeholder="URL de la imagen"
-        class="input input-bordered w-full"
-      />
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">URL de la Imagen</span>
+        </label>
+        <input
+          type="text"
+          formControlName="url"
+          placeholder="URL de la imagen"
+          class="input input-bordered w-full"
+          readonly
+          tabindex="-1"
+        />
+      </div>
 
       <!-- Alt Text -->
-      <input
-        type="text"
-        formControlName="altText"
-        placeholder="Texto alternativo"
-        class="input input-bordered w-full"
-      />
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Texto Alternativo</span>
+        </label>
+        <input
+          type="text"
+          formControlName="altText"
+          placeholder="Texto alternativo"
+          class="input input-bordered w-full"
+        />
+      </div>
 
       <!-- Botón eliminar -->
       <button
@@ -180,18 +197,28 @@
       class="border p-3 mt-2 rounded-md space-y-2"
       [formGroupName]="i"
     >
-      <input
-        type="text"
-        formControlName="label"
-        placeholder="Texto visible"
-        class="input input-bordered w-full"
-      />
-      <input
-        type="text"
-        formControlName="url"
-        placeholder="URL del sitio"
-        class="input input-bordered w-full"
-      />
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Texto Visible del Enlace</span>
+        </label>
+        <input
+          type="text"
+          formControlName="label"
+          placeholder="Texto visible"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">URL del Enlace</span>
+        </label>
+        <input
+          type="text"
+          formControlName="url"
+          placeholder="URL del sitio"
+          class="input input-bordered w-full"
+        />
+      </div>
       <button
         class="btn btn-outline btn-error"
         type="button"
@@ -214,32 +241,52 @@
       class="border p-3 mt-2 rounded-md space-y-2"
       [formGroupName]="i"
     >
-      <select
-        formControlName="idioma"
-        class="select select-bordered w-full"
-      >
-        <option value="">Seleccione un idioma</option>
-        <option value="es">Español</option>
-        <option value="en">Inglés</option>
-      </select>
-      <input
-        type="text"
-        formControlName="title"
-        placeholder="Título"
-        class="input input-bordered w-full"
-      />
-      <input
-        type="text"
-        formControlName="contentDescription"
-        placeholder="Descripción corta"
-        class="input input-bordered w-full"
-      />
-      <textarea
-        formControlName="content"
-        rows="5"
-        placeholder="Contenido HTML"
-        class="textarea textarea-bordered w-full"
-      ></textarea>
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Idioma</span>
+        </label>
+        <select
+          formControlName="idioma"
+          class="select select-bordered w-full"
+        >
+          <option value="">Seleccione un idioma</option>
+          <option value="es">Español</option>
+          <option value="en">Inglés</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Título</span>
+        </label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Título"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Descripción Corta</span>
+        </label>
+        <input
+          type="text"
+          formControlName="contentDescription"
+          placeholder="Descripción corta"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">Contenido</span>
+        </label>
+        <textarea
+          formControlName="content"
+          rows="5"
+          placeholder="Contenido HTML"
+          class="textarea textarea-bordered w-full"
+        ></textarea>
+      </div>
       <button
         class="btn btn-outline btn-error"
         type="button"
@@ -284,8 +331,12 @@
       >Guardar</button>
     </div>
 
-    @if(wasSaved()) {
-    <div class="alert alert-success mt-2">Guardado correctamente</div>
-    }
+    <!-- Sistema de alertas personalizado -->
+    <alert-message
+      [message]="alertMessage()"
+      [type]="alertType()"
+      [show]="showAlert()"
+      (onClose)="onAlertClose()"
+    ></alert-message>
   </div>
 </form>

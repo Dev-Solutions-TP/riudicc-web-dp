@@ -17,10 +17,16 @@ import { ImageEntity } from '@home/interfaces/image.interface';
 import { Enlace } from '@home/interfaces/enlace.interface';
 import { FormUtils } from '@shared/utils/form-utils';
 import { traduccionesValidator } from '@dashboard/validators/traducciontes.validator';
+import { AlertMessageComponent, AlertType } from '@dashboard/components/alert-message/alert-message.component';
+import { environment } from 'src/environments/environment.development';
+
+const API_URL = environment.baseUrl;
+
+
 
 @Component({
   selector: 'noticia-details',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AlertMessageComponent],
   templateUrl: './noticia-details.component.html',
 })
 export class NoticiaDetailsComponent implements OnInit {
@@ -34,6 +40,14 @@ export class NoticiaDetailsComponent implements OnInit {
   wasSaved = signal(false);
   formUtils = FormUtils;
 
+  // Sistema de alertas con el nuevo componente
+  loading = signal(true);
+  isEditing = signal(false);
+
+  // Alertas
+  alertMessage = signal<string>('');
+  alertType = signal<AlertType>('success');
+  showAlert = signal(false);
 
   instituciones = signal<InstitucionEntity[]>([]);
   selectedImageFiles: File[] = [];
@@ -143,7 +157,17 @@ export class NoticiaDetailsComponent implements OnInit {
     return institucion.traducciones[0]?.name || 'Sin nombre';
   }
 
-  // Getters para usar en HTML
+  // Método para mostrar alertas usando el nuevo componente
+  private showCustomAlert(message: string, type: AlertType = 'error') {
+    this.alertMessage.set(message);
+    this.alertType.set(type);
+    this.showAlert.set(true);
+  }
+
+  // Método para ocultar alertas
+  onAlertClose() {
+    this.showAlert.set(false);
+  }  // Getters para usar en HTML
   get imagesFormArray() {
     return this.noticiaForm.get('images') as FormArray<FormGroup>;
   }
@@ -277,7 +301,21 @@ export class NoticiaDetailsComponent implements OnInit {
 
     // Inicializar arrays de archivos e imágenes
     this.selectedImageFiles = new Array(noticia.images.length).fill(undefined);
-    this.previewImageUrls.set(noticia.images.map(img => img.url || ''));
+
+    // Configurar URLs de vista previa - construir URL completa si es necesario
+    const previewUrls = noticia.images.map(img => {
+      // Si la URL ya es completa (comienza con http), usarla tal como está
+      if (img.url && (img.url.startsWith('http') || img.url.startsWith('blob:'))) {
+        return img.url;
+      }
+      // Si es solo un nombre de archivo, construir la URL completa
+      if (img.url) {
+        return `${API_URL}/files/not/${img.url}`;
+      }
+      return '';
+    });
+
+    this.previewImageUrls.set(previewUrls);
   }
 
   async onSubmit() {
@@ -288,7 +326,7 @@ export class NoticiaDetailsComponent implements OnInit {
     // Validaciones básicas
     console.log('Traducciones:', this.traduccionesFormArray.length);
     if (this.traduccionesFormArray.length < 2) {
-      alert('Debe ingresar al menos dos traducciones.');
+      this.showCustomAlert('Debe ingresar al menos dos traducciones.', 'error');
       return;
     }
 
@@ -299,18 +337,16 @@ export class NoticiaDetailsComponent implements OnInit {
     const tieneIngles = idiomasSeleccionados.includes('en');
 
     if (!tieneEspanol || !tieneIngles) {
-      alert('Debe incluir al menos una traducción en Español y otra en Inglés.');
+      this.showCustomAlert('Debe incluir al menos una traducción en Español y otra en Inglés.', 'error');
       return;
     }
-
-
 
     // validar que la traduccion tenga texto, es decir en cada campo el validador requerido sea comprobado
     for (let i = 0; i < this.traduccionesFormArray.length; i++) {
       const group = this.traduccionesFormArray.at(i);
       if (group.invalid) {
         group.markAllAsTouched();
-        alert(`Por favor completa todos los campos requeridos en la traducción #${i + 1}.`);
+        this.showCustomAlert(`Por favor completa todos los campos requeridos en la traducción #${i + 1}.`, 'error');
         return;
       }
     }
@@ -323,6 +359,8 @@ export class NoticiaDetailsComponent implements OnInit {
       Object.entries(this.noticiaForm.controls).forEach(([key, control]) => {
         if (control.invalid) {
           console.error(`Campo inválido: ${key}`, control.errors);
+          this.showCustomAlert(`Por favor completa todos los campos requeridos en la noticia.`, 'error');
+
         }
       });
       return;
@@ -400,11 +438,12 @@ export class NoticiaDetailsComponent implements OnInit {
         this.router.navigate(['/admin/noticias', result.id]);
       }
 
+      this.showCustomAlert('¡Noticia guardada correctamente!', 'success');
       this.wasSaved.set(true);
       setTimeout(() => this.wasSaved.set(false), 3000);
     } catch (error) {
       console.error('Error saving noticia:', error);
-      alert('Error al guardar la noticia. Por favor, intente nuevamente.');
+      this.showCustomAlert('Error al guardar la noticia. Por favor, intente nuevamente.', 'error');
     }
   }
 }
