@@ -25,8 +25,14 @@ export class InstitucionDetailsComponent implements OnInit {
   fb = inject(FormBuilder);
   router = inject(Router);
   institucionesService = inject(InstitucionesService);
-  formUtils = FormUtils;
+
+
   wasSaved = signal(false);
+  formUtils = FormUtils;
+
+  selectedImageFiles: File[] = [];
+  previewImageUrls = signal<string[]>([]);
+
 
   institucionForm = this.fb.group({
     codigo: ['', Validators.required],
@@ -44,7 +50,63 @@ export class InstitucionDetailsComponent implements OnInit {
     enlaces: this.fb.array([], Validators.required),
   });
 
-  selectedImageFiles: File[] = [];
+
+  ngOnInit(): void {
+    const data = this.institucion();
+    if (data.id !== 'new') {
+      this.setFormValues(data);
+    } else {
+      this.addInitialTranslation();
+      this.addInitialImage();
+    }
+  }
+
+  addInitialTranslation() {
+    ['es', 'en'].forEach(idioma => {
+      this.traduccionesFormArray.push(
+        this.fb.group({
+          idioma: [idioma, Validators.required],
+          name: ['', Validators.required],
+          shortName: [''],
+          description: [''],
+        })
+      );
+    });
+  }
+  // add initial image addInitialImage() 
+  addInitialImage() {
+    this.imagesFormArray.push(
+      this.fb.group({
+        url: ['', Validators.required],
+        altText: ['', Validators.required],
+      })
+    );
+    this.selectedImageFiles.push(undefined as any); // marcador
+    this.previewImageUrls.set([...this.previewImageUrls(), '']);
+  }
+
+
+
+  onSingleImageSelected(event: Event, index: number) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    this.selectedImageFiles[index] = file;
+
+    // Vista previa
+    const updatedPreviews = [...this.previewImageUrls()];
+    updatedPreviews[index] = URL.createObjectURL(file);
+    this.previewImageUrls.set(updatedPreviews);
+
+    // Setear nombre de archivo en el campo `url`
+    const imageGroup = this.imagesFormArray.at(index);
+    imageGroup.get('url')?.setValue(file.name);
+    imageGroup.get('url')?.markAsDirty();
+    imageGroup.get('url')?.updateValueAndValidity();
+  }
+
+
+  // Getters para usar en HTML
 
   get traduccionesFormArray() {
     return this.institucionForm.get('traducciones') as FormArray<FormGroup>;
@@ -56,13 +118,71 @@ export class InstitucionDetailsComponent implements OnInit {
     return this.institucionForm.get('enlaces') as FormArray<FormGroup>;
   }
 
-  ngOnInit(): void {
-    const data = this.institucion();
-    if (data.id !== 'new') {
-      this.setFormValues(data);
-    } else {
-      this.addInitialTranslation();
-      this.addInitialImage();
+
+
+
+
+
+
+
+
+
+
+
+  addImage() {
+    this.imagesFormArray.push(
+      this.fb.group({
+        url: ['', Validators.required], // <-- obligatorio
+        altText: ['', Validators.required],
+      })
+    );
+    this.selectedImageFiles.push(undefined as any); // marcador de posición
+    this.previewImageUrls.set([...this.previewImageUrls(), '']);
+  }
+
+  removeImage(index: number) {
+    this.imagesFormArray.removeAt(index);
+    this.selectedImageFiles.splice(index, 1);
+    const previews = [...this.previewImageUrls()];
+    previews.splice(index, 1);
+    this.previewImageUrls.set(previews);
+  }
+
+
+  addEnlace() {
+    this.enlacesFormArray.push(
+      this.fb.group({
+        label: ['', Validators.required],
+        url: ['', Validators.required],
+      })
+    );
+  }
+
+  removeEnlace(index: number) {
+    this.enlacesFormArray.removeAt(index);
+  }
+
+
+
+  addTraduccion() {
+    this.traduccionesFormArray.push(
+      this.fb.group({
+        idioma: ['', Validators.required],
+        name: ['', Validators.required],
+        shortName: [''],
+        description: [''],
+      })
+    );
+  }
+
+  removeTraduccion(index: number) {
+    this.traduccionesFormArray.removeAt(index);
+  }
+
+  onFilesSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files && files.length > 0) {
+      this.selectedImageFiles = Array.from(files);
     }
   }
 
@@ -106,128 +226,10 @@ export class InstitucionDetailsComponent implements OnInit {
       }));
     });
   }
-
-  addInitialTranslation() {
-    ['es', 'en'].forEach(idioma => {
-      this.traduccionesFormArray.push(
-        this.fb.group({
-          idioma: [idioma, Validators.required],
-          name: ['', Validators.required],
-          shortName: [''],
-          description: [''],
-        })
-      );
-    });
-  }
-
-  // add initial image addInitialImage() 
-  addInitialImage() {
-    this.imagesFormArray.push(
-      this.fb.group({
-        url: ['', Validators.required],
-        altText: ['', Validators.required],
-      })
-    );
-    this.selectedImageFiles.push(undefined as any); // marcador
-    this.previewImageUrls.set([...this.previewImageUrls(), '']);
-  }
-
-
-  previewImageUrls = signal<string[]>([]);
-
-
-  onSingleImageSelected(event: Event, index: number) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-
-    this.selectedImageFiles[index] = file;
-
-    // Vista previa
-    const updatedPreviews = [...this.previewImageUrls()];
-    updatedPreviews[index] = URL.createObjectURL(file);
-    this.previewImageUrls.set(updatedPreviews);
-
-    // Setear nombre de archivo en el campo `url`
-    const imageGroup = this.imagesFormArray.at(index);
-    imageGroup.get('url')?.setValue(file.name);
-    imageGroup.get('url')?.markAsDirty();
-    imageGroup.get('url')?.updateValueAndValidity();
-  }
-
-
-
-
-  addImage() {
-    this.imagesFormArray.push(
-      this.fb.group({
-        url: ['', Validators.required], // <-- obligatorio
-        altText: ['', Validators.required],
-      })
-    );
-    this.selectedImageFiles.push(undefined as any); // marcador de posición
-    this.previewImageUrls.set([...this.previewImageUrls(), '']);
-  }
-
-  removeImage(index: number) {
-    this.imagesFormArray.removeAt(index);
-    this.selectedImageFiles.splice(index, 1);
-    const previews = [...this.previewImageUrls()];
-    previews.splice(index, 1);
-    this.previewImageUrls.set(previews);
-  }
-
-
-  addEnlace() {
-    this.enlacesFormArray.push(
-      this.fb.group({
-        label: ['', Validators.required],
-        url: ['', Validators.required],
-      })
-    );
-  }
-
-  removeEnlace(index: number) {
-    this.enlacesFormArray.removeAt(index);
-  }
-
-  onFilesSelected(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    if (files && files.length > 0) {
-      this.selectedImageFiles = Array.from(files);
-    }
-  }
-
-
   // selectedImageFiles: File[] = [];
 
 
-  universidad = {
-    cod: 'ES-003',
-    tipo: 'universidad',
-    slug: 'ife-europe',
-    ciudad: 'Santander',
-    pais: 'España',
-    paisCode: 'E  esS',
-    web: 'https://ifeeurope.es/',
-    es: {
-      name: 'IFE Europe',
-      shortName: 'IFE Europe',
-      description: `El objetivo del IFE Europe es generar, transferir y difundir conocimiento aplicable sobre innovación en educación de forma experimental, interdisciplinar, abierta y de clase mundial. Para ello cuenta con un grupo de investigadores que trabajan en las áreas de innovación en educación superior, aprendizaje permanente, transformación del mercado laboral, tecnología educativa y neurociencias aplicadas al aprendizaje. 
-      
-      Además, realizamos actividades formativas dirigidas a diferentes públicos, tales como investigadores en formación, profesionales vinculados a empresas, gobiernos, e instituciones de la sociedad civil, para contribuir con herramientas para la transformación educativa y el desarrollo de competencias que demanda el futuro del trabajo. 
-      
-      Por último, el IFE Europe cuenta con una red de alianzas relevante en América Latina y Europa, por lo que busca convertirse en un punto central para que los expertos en educación colaboren y desarrollen estrategias educativas innovadoras, con el objetivo de salvar las distancias entre actores y así mejorar la transferencia de conocimientos, la creación de soluciones y la influencia en la política educativa.`,
-    },
-    en: {
-      name: 'IFE Europe',
-      shortName: 'IFE Europe',
-      description: `The goal of IFE Europe is to generate, transfer, and disseminate applicable knowledge on educational innovation in an experimental, interdisciplinary, open, and world-class manner. To achieve this, it has a group of researchers working in the areas of higher education innovation, lifelong learning, labor market transformation, educational technology, and neuroscience applied to learning. 
-      
-      Additionally, we conduct training activities aimed at different audiences, such as researchers in training, professionals linked to companies, governments, and civil society institutions, to provide tools for educational transformation and the development of competencies demanded by the future of work. 
-      
-      Finally, IFE Europe has a significant network of alliances in Latin America and Europe, aiming to become a central point for education experts to collaborate and develop innovative educational strategies to bridge gaps between actors and improve knowledge transfer, solution creation, and influence on educational policy.`,
-    },
-  }
+
   async onSubmit() {
 
     // minimio una imagen
@@ -327,20 +329,5 @@ export class InstitucionDetailsComponent implements OnInit {
   }
 
 
-  removeTraduccion(index: number) {
-    this.traduccionesFormArray.removeAt(index);
-  }
-
-
-  addTraduccion() {
-    this.traduccionesFormArray.push(
-      this.fb.group({
-        idioma: ['', Validators.required],
-        name: ['', Validators.required],
-        shortName: [''],
-        description: [''],
-      })
-    );
-  }
 
 }

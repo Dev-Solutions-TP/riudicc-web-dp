@@ -152,7 +152,7 @@ export class InstitucionesService {
         return forkJoin(uploadObservables);
     }
 
-    uploadImage(imageFile: File, folder: string = 'inst'): Observable<string> {
+    uploadImage(imageFile: File, folder: string): Observable<string> {
         const formData = new FormData();
         formData.append('file', imageFile);
         return this.http

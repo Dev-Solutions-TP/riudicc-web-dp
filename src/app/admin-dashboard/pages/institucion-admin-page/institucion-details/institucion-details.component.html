@@ -122,40 +122,7 @@
         </div>
     </section>
 
-    <!-- <section formArrayName="images">
-        <h2 class="text-lg font-bold">Imágenes</h2>
-        @for(image of imagesFormArray.controls; track image; let i = $index) {
-        <div
-            class="border p-3 mt-2 rounded-md space-y-2"
-            [formGroupName]="i"
-        >
-            <input
-                type="text"
-                formControlName="url"
-                placeholder="Nombre del archivo o URL"
-                class="input input-bordered w-full"
-            />
-            <form-error-label [control]="image.get('url')!" />
-            <input
-                type="text"
-                formControlName="altText"
-                placeholder="Texto alternativo"
-                class="input input-bordered w-full"
-            />
-            <form-error-label [control]="image.get('altText')!" />
-            <button
-                class="btn btn-outline btn-error"
-                type="button"
-                (click)="removeImage(i)"
-            >Eliminar</button>
-        </div>
-        }
-        <button
-            class="btn btn-primary mt-2"
-            type="button"
-            (click)="addImage()"
-        >+ Agregar Imagen</button>
-    </section> -->
+
 
     <section formArrayName="images">
         <h2 class="text-lg font-bold">Imágenes</h2>

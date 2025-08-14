@@ -14,12 +14,17 @@ import { NoticiaImagePipe } from "../../../../home/pages/noticias-page/pipes/not
   templateUrl: './noticia-table.component.html',
 })
 export class ProductTableComponent {
+
   noticias = input.required<NoticiaEntity[]>();
 
   private currentLocale = signal(inject(LOCALE_ID));
 
   private lang = inject(LocalizationService);
 
+  // constructor que imprima noticias
+  // constructor() {
+  //   console.log('Noticias:', this.noticias());
+  // }
 
 
   getTraduccionFrom(noticia: NoticiaEntity) {
@@ -32,4 +37,9 @@ export class ProductTableComponent {
   enlacesRelacionados = this.lang.getText(AppText.app.enlacesRelacionados);
   sociosRelacionados = this.lang.getText(AppText.app.sociosRelacionados);
 
+  onNavigateToNoticia(noticia: NoticiaEntity) {
+    console.log('Navigating to noticia:', noticia);
+    console.log('Navigating to noticia:', noticia.id);
+
+  }
 }

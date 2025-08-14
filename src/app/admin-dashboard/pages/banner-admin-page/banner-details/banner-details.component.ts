@@ -38,8 +38,6 @@ export class BannerDetailsComponent implements OnInit {
   bannerForm = this.fb.group({
     slug: ['', [Validators.required, Validators.pattern(this.formUtils.slugPattern)]],
     tags: [''],
-
-
     enlaces: [''],
     fechaInicio: ['', Validators.required],
     fechaFin: ['', Validators.required],

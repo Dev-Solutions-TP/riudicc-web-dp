@@ -24,7 +24,7 @@ export class NoticiasAdminPageComponent {
       limit: this.noticiasPerPage(),
     }),
     loader: ({ request }) => {
-      return this.noticiasSevice.getNoticias({
+      return this.noticiasSevice.getNoticiasUser({
         offset: request.page * 9,
         limit: request.limit,
       });

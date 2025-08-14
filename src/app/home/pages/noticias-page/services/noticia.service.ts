@@ -3,7 +3,7 @@ import { inject, Injectable, LOCALE_ID, signal } from '@angular/core';
 import { ImageEntity } from "@home/interfaces/image.interface";
 import { Enlace } from "@home/interfaces/enlace.interface";
 import { InstitucionEntity } from "@home/pages/instituciones/interfaces/aliados.interface";
-import { Observable, of, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { NoticiaEntity, NoticiasResponse, Traduccion } from '../interfaces/noticia.interface';
 import { User } from '@auth/interfaces/user.interface';
@@ -113,11 +113,26 @@ export class NoticiasService {
                 offset,
             },
         }).pipe(
-            tap((response) => console.log('Response:', response)),
+            tap((response) => console.log('Noticias Response:', response)),
             tap((resp) => this.noticiasCache.set(key, resp))
         );
     }
 
+
+    getNoticiasUser(option: Options): Observable<NoticiasResponse> {
+        const { limit = 9, offset = 0 } = option;
+
+        console.log('getNoticiasUser', limit, offset);
+
+        return this.http.get<NoticiasResponse>(`${API_URL}/noticias`, {
+            params: {
+                limit,
+                offset,
+            },
+        }).pipe(
+            tap((response) => console.log('Noticias Response:', response)),
+        );
+    }
 
     getNoticiaByIdSlug(idSlug: string): Observable<NoticiaEntity> {
         if (this.noticiaCache.has(idSlug)) {
@@ -129,13 +144,17 @@ export class NoticiasService {
         ;
     }
 
-    getNoticiaByIdSlugUser(idSlug: string): Observable<NoticiaEntity> {
-        if (this.noticiaCache.has(idSlug)) {
-            return of(this.noticiaCache.get(idSlug)!);
+    getNoticiaByIdSlugUser(id: string): Observable<NoticiaEntity> {
+        if (id === 'new') {
+            return of(emptyNoticia);
         }
 
-        return this.http.get<NoticiaEntity>(`${API_URL}/noticias/${idSlug}`,)
-            .pipe(tap((noticia) => this.noticiaCache.set(idSlug, noticia)));
+        if (this.noticiaCache.has(id)) {
+            return of(this.noticiaCache.get(id)!);
+        }
+
+        return this.http.get<NoticiaEntity>(`${API_URL}/noticias/${id}`,)
+            .pipe(tap((noticia) => this.noticiaCache.set(id, noticia)));
         ;
     }
 
@@ -160,16 +179,40 @@ export class NoticiasService {
         );
     }
 
-    // createNoticia(noticia: Partial<NoticiaEntity>): Observable<NoticiaEntity> {
-    //     return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, noticia).pipe(
-    //         tap((created) => this.noticiaCache.set(created.id, created))
-    //     );
-    // }
 
-    updateNoticia(id: string, noticia: Partial<NoticiaEntity>): Observable<NoticiaEntity> {
-        return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, noticia).pipe(
+    updateNoticia(id: string, data: Partial<NoticiaEntity>, imageFiles?: File[]): Observable<NoticiaEntity> {
+
+        if (imageFiles && imageFiles.length) {
+            return this.uploadMultipleImages(imageFiles, 'inst').pipe(
+                switchMap((imageNames) => {
+                    const dto = {
+                        ...data,
+                        images: imageNames.map((fileName, i) => ({
+                            url: fileName,
+                            altText: data.images?.[i]?.altText || '',
+                        })),
+                    };
+                    return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, dto);
+                })
+            );
+        }
+        return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, data).pipe(
             tap((updated) => this.noticiaCache.set(updated.id, updated))
         );
+    }
+
+    uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<string[]> {
+        if (!images) return of([]);
+        const uploadObservables = Array.from(images).map((imageFile) => this.uploadImage(imageFile, folder));
+        return forkJoin(uploadObservables);
+    }
+
+    uploadImage(imageFile: File, folder: string): Observable<string> {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        return this.http
+            .post<{ fileName: string }>(`${API_URL}/files/${folder}`, formData)
+            .pipe(map((resp) => resp.fileName));
     }
 
     deleteNoticia(id: string): Observable<boolean> {

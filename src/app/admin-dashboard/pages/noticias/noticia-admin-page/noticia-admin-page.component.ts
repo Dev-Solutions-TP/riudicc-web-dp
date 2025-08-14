@@ -25,7 +25,7 @@ export class NoticiaAdminPageComponent {
   noticiaResource = rxResource({
     request: () => ({ id: this.noticiaId() }),
     loader: ({ request }) => {
-      return this.noticiasService.getNoticiaById(request.id);
+      return this.noticiasService.getNoticiaByIdSlugUser(request.id);
     },
   });
 
