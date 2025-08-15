@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info';
 
@@ -19,21 +19,35 @@ export class AlertMessageComponent {
     // Outputs
     onClose = output<void>();
 
+    private autoHideTimer?: number;
+
     constructor() {
-        // Auto-hide functionality
-        this.startAutoHideTimer();
+        // Auto-hide functionality con effect para reaccionar a cambios
+        effect(() => {
+            if (this.show() && this.autoHide()) {
+                this.startAutoHideTimer();
+            } else {
+                this.clearAutoHideTimer();
+            }
+        });
     }
 
     private startAutoHideTimer() {
-        // Usar effect para reaccionar a cambios en show y autoHide
-        if (this.show() && this.autoHide()) {
-            setTimeout(() => {
-                this.close();
-            }, this.duration());
+        this.clearAutoHideTimer();
+        this.autoHideTimer = window.setTimeout(() => {
+            this.close();
+        }, this.duration());
+    }
+
+    private clearAutoHideTimer() {
+        if (this.autoHideTimer) {
+            clearTimeout(this.autoHideTimer);
+            this.autoHideTimer = undefined;
         }
     }
 
     close() {
+        this.clearAutoHideTimer();
         this.onClose.emit();
     }
 

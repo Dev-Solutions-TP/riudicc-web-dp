@@ -275,6 +275,7 @@ export class NoticiaDetailsComponent implements OnInit {
       );
     });
 
+    console.log('Poblando images:', noticia.images);
     // Poblar imágenes
     noticia.images.forEach((img) => {
       this.imagesFormArray.push(
@@ -385,10 +386,10 @@ export class NoticiaDetailsComponent implements OnInit {
       state: formValue.state ?? 'borrador',
       displayDate: displayDate,
       traducciones: formValue.traducciones as Traduccion[],
-      images: (formValue.images as any[]).map(img => ({
+      images: (formValue.images as any[]).map((img, index) => ({
         url: img.url,
         altText: img.altText,
-        orden: this.imagesFormArray.controls.indexOf(img) + 1,
+        orden: index + 1,
       })) as ImageEntity[],
       enlaces: formValue.enlaces as Enlace[],
     };

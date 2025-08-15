@@ -323,20 +323,22 @@
     </div>
   </section>
 
-  <div class="mb-20">
-    <div class="flex justify-end">
-      <button
-        class="btn btn-success"
-        type="submit"
-      >Guardar</button>
-    </div>
-
-    <!-- Sistema de alertas personalizado -->
-    <alert-message
-      [message]="alertMessage()"
-      [type]="alertType()"
-      [show]="showAlert()"
-      (onClose)="onAlertClose()"
-    ></alert-message>
+  <div class="flex justify-end mt-10">
+    <button
+      class="btn btn-success"
+      type="submit"
+    >Guardar</button>
   </div>
+
 </form>
+
+<!-- Sistema de alertas personalizado - FUERA DEL FORMULARIO -->
+<div class="mb-20">
+
+  <alert-message
+    [message]="alertMessage()"
+    [type]="alertType()"
+    [show]="showAlert()"
+    (onClose)="onAlertClose()"
+  ></alert-message>
+</div>

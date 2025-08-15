@@ -149,12 +149,10 @@ export class NoticiasService {
             return of(emptyNoticia);
         }
 
-        if (this.noticiaCache.has(id)) {
-            return of(this.noticiaCache.get(id)!);
-        }
 
-        return this.http.get<NoticiaEntity>(`${API_URL}/noticias/${id}`,)
-            .pipe(tap((noticia) => this.noticiaCache.set(id, noticia)));
+
+        return this.http.get<NoticiaEntity>(`${API_URL}/noticias/${id}`,);
+
         ;
     }
 
@@ -178,11 +176,11 @@ export class NoticiasService {
 
         if (imageFiles && imageFiles.length) {
             return this.uploadMultipleImages(imageFiles, 'not').pipe(
-                switchMap((imageNames) => {
+                switchMap((uploadResults) => {
                     const dto = {
                         ...data,
-                        images: imageNames.map((fileName, i) => ({
-                            url: fileName,
+                        images: uploadResults.map((result, i) => ({
+                            url: result.serverName,
                             altText: data.images?.[i]?.altText || '',
                             orden: i + 1,
                         })),
@@ -193,9 +191,7 @@ export class NoticiasService {
             );
         }
 
-        return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, data).pipe(
-            tap((created) => this.noticiaCache.set(created.id, created))
-        );
+        return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, data)
     }
 
 
@@ -204,25 +200,44 @@ export class NoticiasService {
 
         if (imageFiles && imageFiles.length) {
             return this.uploadMultipleImages(imageFiles, 'not').pipe(
-                switchMap((imageNames) => {
+                switchMap((uploadResults) => {
+                    console.log('Resultados de subida:', uploadResults);
+
+                    // Crear una copia de las imágenes originales
+                    const finalImages = [...(data.images || [])];
+
+                    // Para cada resultado de subida, buscar en data.images dónde está el nombre original
+                    // y reemplazar con el nombre del servidor
+                    uploadResults.forEach((result) => {
+                        const { originalName, serverName } = result;
+
+                        // Buscar en finalImages donde la url coincida con el nombre original
+                        const imageIndex = finalImages.findIndex(img => img.url === originalName);
+
+                        if (imageIndex !== -1) {
+                            // Actualizar con el nombre del servidor
+                            finalImages[imageIndex] = {
+                                ...finalImages[imageIndex],
+                                url: serverName,
+                                orden: imageIndex + 1,
+                            };
+                            console.log(`Imagen ${imageIndex} actualizada: ${originalName} -> ${serverName}`);
+                        }
+                    });
+
                     const dto = {
                         ...data,
-                        images: imageNames.map((fileName, i) => ({
-                            url: fileName,
-                            altText: data.images?.[i]?.altText || '',
-                            orden: i + 1,
-                        })),
+                        images: finalImages,
                     };
+
+                    console.log('DTO UPDATE con imágenes antes de enviar a servicio:', dto);
                     return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, dto);
                 })
             );
         }
-        return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, data).pipe(
-            tap((updated) => this.noticiaCache.set(updated.id, updated))
-        );
-    }
 
-    uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<string[]> {
+        return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, data);
+    } uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<{ originalName: string, serverName: string }[]> {
         if (!images || images.length === 0) return of([]);
 
         // Filtrar archivos válidos (no undefined, no null)
@@ -233,19 +248,19 @@ export class NoticiasService {
         return forkJoin(uploadObservables);
     }
 
-    uploadImage(imageFile: File, folder: string): Observable<string> {
+    uploadImage(imageFile: File, folder: string): Observable<{ originalName: string, serverName: string }> {
         const formData = new FormData();
         formData.append('file', imageFile);
 
         return this.http
             .post<{ fileName: string }>(`${API_URL}/files/${folder}`, formData)
-            .pipe(map((resp) => resp.fileName));
+            .pipe(
+                map((resp) => ({
+                    originalName: imageFile.name,
+                    serverName: resp.fileName
+                }))
+            );
     }
 
-    deleteNoticia(id: string): Observable<boolean> {
-        return this.http.delete<boolean>(`${API_URL}/noticias/${id}`).pipe(
-            tap(() => this.noticiaCache.delete(id))
-        );
-    }
 
 }
