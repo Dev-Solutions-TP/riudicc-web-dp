@@ -87,6 +87,8 @@ export class BannersService {
         data: Partial<UpdateBannerDto>,
         imageFile?: File
     ): Observable<BannerEntity> {
+        console.log('DTO UPDATE con imágenes:', imageFile);
+
         if (imageFile) {
             return this.uploadEntityImage(imageFile, 'ban').pipe(
                 switchMap((fileName) => {
@@ -108,6 +110,8 @@ export class BannersService {
         data: Partial<UpdateBannerDto>,
         imageFile?: File
     ): Observable<BannerEntity> {
+        console.log('DTO UPDATE con imágenes:', imageFile);
+
         if (imageFile) {
             return this.uploadEntityImage(imageFile, 'ban').pipe(
                 switchMap((fileName) => {
@@ -129,6 +133,7 @@ export class BannersService {
         const formData = new FormData();
         formData.append('file', file);
 
+        console.log('Uploading image to folder: ', formData);
         return this.http.post<{ fileName: string; secureUrl: string }>(
             `${API_URL}/files/${folder}`,
             formData

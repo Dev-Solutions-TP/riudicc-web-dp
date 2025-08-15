@@ -1,7 +1,7 @@
 
 export interface ImageEntity {
     id: string;
-    orden?: number;
+    orden: number;
     url: string;
     altText: string;
 }

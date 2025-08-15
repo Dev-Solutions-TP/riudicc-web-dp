@@ -388,6 +388,7 @@ export class NoticiaDetailsComponent implements OnInit {
       images: (formValue.images as any[]).map(img => ({
         url: img.url,
         altText: img.altText,
+        orden: this.imagesFormArray.controls.indexOf(img) + 1,
       })) as ImageEntity[],
       enlaces: formValue.enlaces as Enlace[],
     };
@@ -430,9 +431,15 @@ export class NoticiaDetailsComponent implements OnInit {
     console.log('DTO final:', noticiaLike);
 
     try {
+      console.log('Enviando datos al servicio de noticias... antes de enviar las imágenes son:', this.selectedImageFiles);
+
+      // Filtrar archivos válidos (no undefined)
+      const validImageFiles = this.selectedImageFiles.filter(file => file !== undefined) as File[];
+      console.log('Archivos de imagen válidos:', validImageFiles);
+
       const result = isNew
-        ? await firstValueFrom(this.noticiasService.createNoticia(noticiaLike))
-        : await firstValueFrom(this.noticiasService.updateNoticia(id, noticiaLike));
+        ? await firstValueFrom(this.noticiasService.createNoticia(noticiaLike, validImageFiles.length > 0 ? validImageFiles : undefined))
+        : await firstValueFrom(this.noticiasService.updateNoticia(id, noticiaLike, validImageFiles.length > 0 ? validImageFiles : undefined));
 
       if (isNew) {
         this.router.navigate(['/admin/noticias', result.id]);

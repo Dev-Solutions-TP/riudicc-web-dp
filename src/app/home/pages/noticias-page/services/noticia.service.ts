@@ -173,23 +173,44 @@ export class NoticiasService {
             .pipe(tap((noticia) => this.noticiaCache.set(id, noticia)));
     }
 
-    createNoticia(noticia: Partial<NoticiaEntity>): Observable<NoticiaEntity> {
-        return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, noticia).pipe(
-            tap((created) => this.noticiaCache.set(created.id, created))
-        );
-    }
-
-
-    updateNoticia(id: string, data: Partial<NoticiaEntity>, imageFiles?: File[]): Observable<NoticiaEntity> {
+    createNoticia(data: Partial<NoticiaEntity>, imageFiles?: File[]): Observable<NoticiaEntity> {
+        console.log('DTO con imágenes:', data, imageFiles);
 
         if (imageFiles && imageFiles.length) {
-            return this.uploadMultipleImages(imageFiles, 'inst').pipe(
+            return this.uploadMultipleImages(imageFiles, 'not').pipe(
                 switchMap((imageNames) => {
                     const dto = {
                         ...data,
                         images: imageNames.map((fileName, i) => ({
                             url: fileName,
                             altText: data.images?.[i]?.altText || '',
+                            orden: i + 1,
+                        })),
+                    };
+                    console.log('DTO con imágenes:', dto);
+                    return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, dto);
+                })
+            );
+        }
+
+        return this.http.post<NoticiaEntity>(`${API_URL}/noticias`, data).pipe(
+            tap((created) => this.noticiaCache.set(created.id, created))
+        );
+    }
+
+
+    updateNoticia(id: string, data: Partial<NoticiaEntity>, imageFiles?: File[]): Observable<NoticiaEntity> {
+        console.log('DTO UPDATE con imágenes:', data, imageFiles);
+
+        if (imageFiles && imageFiles.length) {
+            return this.uploadMultipleImages(imageFiles, 'not').pipe(
+                switchMap((imageNames) => {
+                    const dto = {
+                        ...data,
+                        images: imageNames.map((fileName, i) => ({
+                            url: fileName,
+                            altText: data.images?.[i]?.altText || '',
+                            orden: i + 1,
                         })),
                     };
                     return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, dto);
@@ -202,14 +223,20 @@ export class NoticiasService {
     }
 
     uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<string[]> {
-        if (!images) return of([]);
-        const uploadObservables = Array.from(images).map((imageFile) => this.uploadImage(imageFile, folder));
+        if (!images || images.length === 0) return of([]);
+
+        // Filtrar archivos válidos (no undefined, no null)
+        const validImages = images.filter(img => img instanceof File);
+        if (validImages.length === 0) return of([]);
+
+        const uploadObservables = validImages.map((imageFile) => this.uploadImage(imageFile, folder));
         return forkJoin(uploadObservables);
     }
 
     uploadImage(imageFile: File, folder: string): Observable<string> {
         const formData = new FormData();
         formData.append('file', imageFile);
+
         return this.http
             .post<{ fileName: string }>(`${API_URL}/files/${folder}`, formData)
             .pipe(map((resp) => resp.fileName));
