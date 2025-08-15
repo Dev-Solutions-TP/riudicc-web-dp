@@ -13,7 +13,6 @@ export class FormErrorLabelComponent {
 
   get errorMessage() {
     const errors: ValidationErrors = this.control().errors || {};
-
     return this.control().touched && Object.keys(errors).length > 0
       ? FormUtils.getTextError(errors)
       : null;

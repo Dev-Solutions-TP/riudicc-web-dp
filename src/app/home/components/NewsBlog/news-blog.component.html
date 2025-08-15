@@ -3,16 +3,13 @@
         @if(noticias().length>1){
 
         <div
-            class="2xl:w-8/12 lg:w-8/12 md:w-full lg:pb-3 cursor-pointer hover:shadow-xl transition-shadow duration-300  bg-transparent"
+            class="2xl:w-8/12 lg:w-8/12 md:w-full lg:pb-3 cursor-pointer hover:shadow-xl transition-shadow duration-300 bg-transparent h-auto"
             [routerLink]="['/news', noticias()[0].slug]"
         >
-
-
-            <figure class=" justify-center bg-white">
-
+            <figure class="justify-center bg-white h-96">
                 <img
-                    [src]="noticias()[0].images | noticiaImagePipe"
-                    [alt]="noticias()[0].images[0].altText"
+                    [src]="getImagenPrincipal(noticias()[0]) | imageNamePipe: 'not'"
+                    [alt]="getImagenPrincipal(noticias()[0])?.altText || getTraduccion(noticias()[0]).contentDescription"
                     class="h-full w-full object-cover"
                 >
             </figure>
@@ -54,93 +51,61 @@
         @if(noticias().length==3){
 
 
-        <div
-            class="lg:ml-6 lg:mt-0 mt-7 2xl:w-3/12 lg:w-4/12 md:w-full flex md:flex-col sm:flex-row flex-col lg:items-center lg:justify-between ">
+        <div class="lg:ml-6 lg:mt-0 mt-7 2xl:w-3/12 lg:w-4/12 md:w-full flex flex-col h-auto">
+
+            <!-- Contenedor de la segunda noticia con altura controlada -->
             <div
-                class="lg:w-auto md:w-full sm:w-1/2 cursor-pointer hover:shadow-xl transition-shadow duration-300  bg-transparent">
+                class="cursor-pointer hover:shadow-xl transition-shadow duration-300 bg-transparent flex flex-col h-full">
+                <!-- Imagen ocupa 60% del espacio -->
+                <div class="h-60 w-full">
+                    <img
+                        [src]="getImagenPrincipal(noticias()[1]) | imageNamePipe: 'not'"
+                        [alt]="getImagenPrincipal(noticias()[1])?.altText || getTraduccion(noticias()[1]).contentDescription"
+                        class="h-full w-full object-cover rounded-t"
+                    >
+                </div>
 
-                <img
-                    [src]="noticias()[1].images | noticiaImagePipe"
-                    [alt]="noticias()[1].images[0].altText"
-                    class="w-full"
-                />
-                <div class="my-4 mx-2">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <p class="text-base leading-4 text-gray-500">{{ noticias()[1].displayDate | date: 'EEEE d,
-                                MMMM'
-                                }}</p>
+                <!-- Contenido de la noticia -->
+                <div class="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <p class="text-base leading-4 text-gray-500">{{ noticias()[1].displayDate | date: 'EEEE
+                                    d, MMMM' }}</p>
+                            </div>
+                            <div class="flex items-center">
+                                <svg
+                                    width="64"
+                                    height="2"
+                                    viewBox="0 0 64 2"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M64 1H0"
+                                        stroke="#6B7280"
+                                    />
+                                </svg>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <svg
-                                width="64"
-                                height="2"
-                                viewBox="0 0 64 2"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M64 1H0"
-                                    stroke="#6B7280"
-                                />
-                            </svg>
-
-                        </div>
+                        <h1
+                            class="text-xl font-semibold text-gray-800 hover:underline cursor-pointer mb-2"
+                            [routerLink]="['/news', noticias()[1].slug]"
+                        >{{getTraduccion(noticias()[1]).title}}
+                        </h1>
+                        <p class="line-clamp-3 text-base leading-6 text-gray-600">
+                            {{getTraduccion(noticias()[1]).contentDescription}}
+                        </p>
                     </div>
-                    <h1
-                        class="lg:text-3xl text-2xl font-semibold mt-4 text-gray-800 hover:underline cursor-pointer"
-                        [routerLink]="['/news', noticias()[1].slug]"
-                    >{{getTraduccion(noticias()[1]).title}}
-                    </h1>
-                    <p class="line-clamp-3 text-base leading-6 text-gray-600 mt-2">
-                        {{getTraduccion(noticias()[1]).contentDescription}}
-
-                    </p>
                 </div>
             </div>
-            <!-- <div class="lg:mt-6 sm:mt-0 mt-6 lg:ml-0 sm:ml-6 lg:w-auto sm:w-1/2">
-                <img
-                    [src]="noticias()[0].images | noticiaImagePipe"
-                    [alt]="noticias()[0].images[2].altText"
-                    class="w-full"
-                />
-                <div class="mt-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <p class="text-base leading-4 text-gray-500">{{ noticias()[2].displayDate | date: 'EEEE d,
-                                MMMM'
-                                }}</p>
 
-                        </div>
-                        <div class="flex items-center">
-                            <svg
-                                width="64"
-                                height="2"
-                                viewBox="0 0 64 2"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M64 1H0"
-                                    stroke="#6B7280"
-                                />
-                            </svg>
-                        </div>
-                    </div>
-                    <h1 class="text-2xl font-semibold leading-6 mt-4 text-gray-800">
-                        {{getTraduccion(noticias()[2]).title}}</h1>
-                    <p class="text-base leading-6 text-gray-600 mt-2">
-                        {{getTraduccion(noticias()[2]).contentDescription}}</p>
-                </div>
-            </div> -->
-
-
+            <!-- Botón centrado en el espacio restante -->
             <div class="flex w-full justify-center lg:mb-10 lg:mt-6 sm:mt-0 md:mt-15 mt-6">
-
                 <a
                     data-sveltekit-preload-data=""
                     [routerLink]="['/news']"
-                    class="btn  btn-wide btn-lg btn-outline"
+                    class="btn btn-wide btn-lg btn-outline"
                 >{{moreNews()}}</a>
             </div>
 

@@ -21,10 +21,18 @@ export class FormUtils {
   static slugPattern = '^[a-z0-9_]+(?:-[a-z0-9_]+)*$';
 
   static getTextError(errors: ValidationErrors) {
+    // Primero verificar si ya existe un mensaje personalizado
+    if (errors['message']) {
+      return errors['message'];
+    }
+
     for (const key of Object.keys(errors)) {
       switch (key) {
         case 'required':
           return 'Este campo es requerido';
+
+        case 'incomplete':
+          return 'Información incompleta';
 
         case 'minlength':
           return `Mínimo de ${errors['minlength'].requiredLength} caracteres.`;

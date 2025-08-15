@@ -9,13 +9,15 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
       <div>
         <label class="label">
-          <span class="label-text font-semibold">Slug</span>
+          <span class="label-text font-semibold">Slug *</span>
         </label>
         <input
           type="text"
           formControlName="slug"
           class="input input-bordered w-full"
         />
+        <form-error-label [control]="noticiaForm.get('slug')!" />
+
       </div>
       <div>
         <label class="label">
@@ -63,7 +65,7 @@
             class="tooltip tooltip-bottom z-50"
             data-tip="Estado de la noticia: &#10;Publicado (Muestra en Web),&#10;Editando (En espera a ser publicado)&#10;o Borrador (No se muestra en Web)"
           >
-            <span class="label-text font-semibold cursor-help">Estado</span>
+            <span class="label-text font-semibold cursor-help">Estado *</span>
           </div>
         </label>
         <select
@@ -72,19 +74,23 @@
         >
           <option value="active">Publicado</option>
           <option value="editing">Editando</option>
-          <option value="deleted">Borrador</option>
+          <option value="deleted">Borrado</option>
         </select>
+        <form-error-label [control]="noticiaForm.get('state')!" />
       </div>
       <div>
         <label class="label">
-          <span class="label-text font-semibold">Fecha de Publicación</span>
+          <span class="label-text font-semibold">Fecha de la noticia *</span>
         </label>
         <input
           type="date"
           formControlName="displayDate"
           class="input input-bordered w-full"
         />
+        <form-error-label [control]="noticiaForm.get('slug')!" />
+
       </div>
+
       <div>
         <label class="label">
           <span class="label-text font-semibold">Latitud</span>
@@ -167,6 +173,7 @@
           placeholder="Texto alternativo"
           class="input input-bordered w-full"
         />
+        <form-error-label [control]="imagesFormArray.at(i).get('altText')!" />
       </div>
 
       <!-- Botón eliminar -->
@@ -180,13 +187,16 @@
     </div>
     }
 
-    <button
-      class="btn btn-primary mt-2"
-      type="button"
-      (click)="addImage()"
-    >
-      + Agregar Imagen
-    </button>
+    <div class="flex flex-col gap-2 mt-2">
+      <form-error-label [control]="noticiaForm.get('images')!" />
+      <button
+        class="btn btn-primary self-start"
+        type="button"
+        (click)="addImage()"
+      >
+        + Agregar Imagen
+      </button>
+    </div>
   </section>
 
   <!-- 3. Enlaces -->
@@ -253,6 +263,8 @@
           <option value="es">Español</option>
           <option value="en">Inglés</option>
         </select>
+        <form-error-label [control]="traduccionesFormArray.at(i).get('idioma')!" />
+
       </div>
       <div>
         <label class="label">
@@ -264,6 +276,7 @@
           placeholder="Título"
           class="input input-bordered w-full"
         />
+        <form-error-label [control]="traduccionesFormArray.at(i).get('title')!" />
       </div>
       <div>
         <label class="label">
@@ -275,6 +288,7 @@
           placeholder="Descripción corta"
           class="input input-bordered w-full"
         />
+        <form-error-label [control]="traduccionesFormArray.at(i).get('contentDescription')!" />
       </div>
       <div>
         <label class="label">
@@ -286,6 +300,7 @@
           placeholder="Contenido HTML"
           class="textarea textarea-bordered w-full"
         ></textarea>
+        <form-error-label [control]="traduccionesFormArray.at(i).get('content')!" />
       </div>
       <button
         class="btn btn-outline btn-error"

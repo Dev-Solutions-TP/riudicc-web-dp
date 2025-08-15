@@ -6,6 +6,8 @@ import {
   FormGroup,
   ReactiveFormsModule,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NoticiaEntity, Traduccion } from '@home/pages/noticias-page/interfaces/noticia.interface';
@@ -19,6 +21,7 @@ import { FormUtils } from '@shared/utils/form-utils';
 import { traduccionesValidator } from '@dashboard/validators/traducciontes.validator';
 import { AlertMessageComponent, AlertType } from '@dashboard/components/alert-message/alert-message.component';
 import { environment } from 'src/environments/environment.development';
+import { FormErrorLabelComponent } from "@shared/components/form-error-label/form-error-label.component";
 
 const API_URL = environment.baseUrl;
 
@@ -26,7 +29,7 @@ const API_URL = environment.baseUrl;
 
 @Component({
   selector: 'noticia-details',
-  imports: [ReactiveFormsModule, AlertMessageComponent],
+  imports: [ReactiveFormsModule, AlertMessageComponent, FormErrorLabelComponent],
   templateUrl: './noticia-details.component.html',
 })
 export class NoticiaDetailsComponent implements OnInit {
@@ -54,6 +57,28 @@ export class NoticiaDetailsComponent implements OnInit {
   previewImageUrls = signal<string[]>([]);
   selectedInstituciones = signal<string[]>([]);
 
+  // Custom validator para el FormArray de imágenes
+  private imagesValidator(control: AbstractControl): ValidationErrors | null {
+    const formArray = control as FormArray;
+
+    // Verificar si está vacío
+    if (formArray.length === 0) {
+      return { 'required': true, 'message': 'Debe agregar al menos una imagen' };
+    }
+
+    // Verificar si todas las imágenes tienen URL
+    const hasEmptyImages = formArray.controls.some(group => {
+      const urlControl = group.get('url');
+      return !urlControl?.value || urlControl.value.trim() === '';
+    });
+
+    if (hasEmptyImages) {
+      return { 'incomplete': true, 'message': 'Todas las imágenes deben tener una URL válida' };
+    }
+
+    return null;
+  }
+
   noticiaForm = this.fb.group({
     slug: ['', [Validators.required, Validators.pattern(this.formUtils.slugPattern)]],
     tags: [''],
@@ -62,11 +87,11 @@ export class NoticiaDetailsComponent implements OnInit {
     ciudad: [''],
     latitud: [''],
     longitud: [''],
-    state: ['active', Validators.required],
+    state: ['editing', Validators.required],
     displayDate: ['', Validators.required], // Cambiar a string para input date
     instituciones: this.fb.array([]),
     traducciones: this.fb.array([], Validators.required),
-    images: this.fb.array([], Validators.required),
+    images: this.fb.array([], [this.imagesValidator]),
     enlaces: this.fb.array([],),
   });
 
@@ -129,6 +154,9 @@ export class NoticiaDetailsComponent implements OnInit {
     imageGroup.get('url')?.setValue(file.name);
     imageGroup.get('url')?.markAsDirty();
     imageGroup.get('url')?.updateValueAndValidity();
+
+    // Revalidar el FormArray después de seleccionar imagen
+    this.imagesFormArray.updateValueAndValidity();
   }
 
   isInstitucionSelected(institucionId: string): boolean {
@@ -194,6 +222,9 @@ export class NoticiaDetailsComponent implements OnInit {
     );
     this.selectedImageFiles.push(undefined as any);
     this.previewImageUrls.set([...this.previewImageUrls(), '']);
+
+    // Revalidar el FormArray después de agregar
+    this.imagesFormArray.updateValueAndValidity();
   }
 
   removeImage(index: number) {
@@ -202,6 +233,9 @@ export class NoticiaDetailsComponent implements OnInit {
     const previews = [...this.previewImageUrls()];
     previews.splice(index, 1);
     this.previewImageUrls.set(previews);
+
+    // Revalidar el FormArray después de remover
+    this.imagesFormArray.updateValueAndValidity();
   }
 
   addEnlace() {
@@ -218,8 +252,8 @@ export class NoticiaDetailsComponent implements OnInit {
       this.fb.group({
         idioma: ['', Validators.required],
         title: ['', Validators.required],
-        contentDescription: [''],
-        content: [''],
+        contentDescription: ['', Validators.required],
+        content: ['', Validators.required],
       })
     );
   }
@@ -323,6 +357,7 @@ export class NoticiaDetailsComponent implements OnInit {
     console.log('Form values:', this.noticiaForm.value);
     console.log('Selected instituciones:', this.selectedInstituciones());
     console.log('Selected image files:', this.selectedImageFiles);
+    this.noticiaForm.markAllAsTouched();
 
     // Validaciones básicas
     console.log('Traducciones:', this.traduccionesFormArray.length);
@@ -352,9 +387,23 @@ export class NoticiaDetailsComponent implements OnInit {
       }
     }
 
+    // Validar que al menos haya una imagen válida
+    const tieneImagenValida = this.imagesFormArray.controls.some(group => {
+      const url = group.get('url')?.value;
+      return !!url && typeof url === 'string' && url.trim() !== '';
+    });
+
+    if (!tieneImagenValida) {
+      // Marcar el FormArray como touched para que se muestre el error
+      this.imagesFormArray.markAsTouched();
+      this.showCustomAlert('Debe subir al menos una imagen.', 'error');
+      return;
+    }
 
     if (this.noticiaForm.invalid) {
       this.noticiaForm.markAllAsTouched();
+      // También marcar específicamente el FormArray de imágenes
+      this.imagesFormArray.markAsTouched();
       console.log('Formulario inválido:', this.noticiaForm.errors);
       // Revisión campo por campo
       Object.entries(this.noticiaForm.controls).forEach(([key, control]) => {
