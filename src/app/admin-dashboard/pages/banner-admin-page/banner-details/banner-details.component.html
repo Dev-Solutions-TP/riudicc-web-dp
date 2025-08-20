@@ -114,39 +114,50 @@
                     <option value="deleted">Borrado</option>
                 </select>
             </div>
-            <div>
-                <!-- Imagen (archivo) -->
-                <label class="label">
-                    <div
-                        class="tooltip tooltip-bottom z-50"
-                        data-tip="Selecciona una imagen para el banner"
-                    >
-                        <span class="label-text font-semibold cursor-help">Imagen</span>
+            <div class="col-span-1 sm:col-span-2">
+                <!-- Imagen (archivo) con layout de dos columnas -->
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <!-- Columna izquierda: Controles de imagen -->
+                    <div class="w-full lg:w-1/2">
+                        <label class="label">
+                            <div
+                                class="tooltip tooltip-bottom z-50"
+                                data-tip="Selecciona una imagen para el banner"
+                            >
+                                <span class="label-text font-semibold cursor-help">Imagen</span>
+                            </div>
+                        </label>
+
+                        <!-- Mostrar nombre si existe -->
+                        @if (originalImageName) {
+                        <div class="text-sm text-gray-500 italic mb-2 break-all">
+                            <span class="font-medium">Imagen actual:</span> {{ originalImageName }}
+                        </div>
+                        }
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            class="file-input file-input-bordered w-full"
+                            (change)="onImageSelected($event)"
+                        />
                     </div>
-                </label>
-                <!-- Mostrar nombre si existe -->
-                @if (originalImageName) {
-                <div class="text-sm text-gray-500 italic mt-1">
-                    Imagen actual: {{ originalImageName }}
+
+                    <!-- Columna derecha: Vista previa -->
+                    @if(previewImageUrl()) {
+                    <div class="w-full lg:w-1/2">
+                        <div class="label">
+                            <span class="label-text font-semibold">Vista previa</span>
+                        </div>
+                        <img
+                            [src]="previewImageUrl()"
+                            alt="Vista previa del banner"
+                            class="w-full rounded shadow-md"
+                        />
+                    </div>
+                    }
                 </div>
-                }
-                <input
-                    type="file"
-                    accept="image/*"
-                    class="file-input file-input-bordered w-full"
-                    (change)="onImageSelected($event)"
-                />
-
-
             </div>
-            @if(previewImageUrl()) {
-            <div class="mt-2">
-                <img
-                    [src]="previewImageUrl()"
-                    alt="Vista previa del banner"
-                    class="w-full max-w-xs rounded shadow-md"
-                />
-            </div>}
         </div>
 
     </section>
