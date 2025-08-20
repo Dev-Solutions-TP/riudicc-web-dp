@@ -15,6 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { FormErrorLabelComponent } from "../../../../shared/components/form-error-label/form-error-label.component";
 import { FormUtils } from '@shared/utils/form-utils';
+import { AlertMessageComponent, AlertType } from '@dashboard/components/alert-message/alert-message.component';
 
 
 const API_URL = environment.baseUrl;
@@ -22,7 +23,7 @@ const API_URL = environment.baseUrl;
 @Component({
   selector: 'banner-details',
   standalone: true,
-  imports: [ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [ReactiveFormsModule, FormErrorLabelComponent, AlertMessageComponent],
   templateUrl: './banner-details.component.html',
 })
 export class BannerDetailsComponent implements OnInit {
@@ -33,7 +34,31 @@ export class BannerDetailsComponent implements OnInit {
   bannersService = inject(BannersService);
 
   wasSaved = signal(false);
+  isSaving = signal(false); // Nuevo signal para el estado de guardado
   formUtils = FormUtils;
+
+  // Sistema de alertas
+  alertMessage = signal<string>('');
+  alertType = signal<AlertType>('success');
+  showAlert = signal(false);
+
+  // Método helper para construir URLs de imagen
+  private buildImageUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+
+    // Si la URL ya es completa (Cloudinary u otras URLs), usarla tal como está
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('blob:')) {
+      return imageUrl;
+    }
+
+    // Si es solo un nombre de archivo (sistema anterior), construir la URL completa
+    return `${API_URL}/files/ban/${imageUrl}`;
+  }
+
+  // Método público para usar en el template
+  getImageUrl(imageUrl: string): string {
+    return this.buildImageUrl(imageUrl);
+  }
 
   bannerForm = this.fb.group({
     slug: ['', [Validators.required, Validators.pattern(this.formUtils.slugPattern)]],
@@ -100,8 +125,8 @@ export class BannerDetailsComponent implements OnInit {
     // });
     // 🟢 Mostrar imagen previa si ya existe y no hay una cargada nueva
     if (banner.image) {
-      this.originalImageName = banner.image; // 👈 guarda solo el nombre
-      this.originalImageUrl = `${API_URL}/files/ban/${banner.image}`; // la URL completa
+      this.originalImageName = banner.image; // 👈 guarda el valor original (puede ser nombre o URL)
+      this.originalImageUrl = this.buildImageUrl(banner.image); // 👈 usa el helper para construir la URL
       this.previewImageUrl.set(this.originalImageUrl);
     }
 
@@ -136,14 +161,30 @@ export class BannerDetailsComponent implements OnInit {
     this.traduccionesFormArray.removeAt(index);
   }
 
-  async onSubmit() {
-    if (!this.imageFile && !this.originalImageName) {
+  // Método para mostrar alertas usando el nuevo componente
+  private showCustomAlert(message: string, type: AlertType = 'error') {
+    this.alertMessage.set(message);
+    this.alertType.set(type);
+    this.showAlert.set(true);
+  }
 
-      alert('Debe subir una imagen.');
+  // Método para ocultar alertas
+  onAlertClose() {
+    this.showAlert.set(false);
+  }
+
+  async onSubmit() {
+    // Activar estado de guardado al inicio
+    this.isSaving.set(true);
+
+    if (!this.imageFile && !this.originalImageName) {
+      this.showCustomAlert('Debe subir una imagen.', 'error');
+      this.isSaving.set(false);
       return;
     }
     if (this.traduccionesFormArray.length < 2) {
-      alert('Debe ingresar al menos dos traducciones.');
+      this.showCustomAlert('Debe ingresar al menos dos traducciones.', 'error');
+      this.isSaving.set(false);
       return;
     }
     const idiomasSeleccionados = this.traduccionesFormArray.controls
@@ -153,7 +194,8 @@ export class BannerDetailsComponent implements OnInit {
     const tieneIngles = idiomasSeleccionados.includes('en');
 
     if (!tieneEspanol || !tieneIngles) {
-      alert('Debe incluir al menos una traducción en Español y otra en Inglés.');
+      this.showCustomAlert('Debe incluir al menos una traducción en Español y otra en Inglés.', 'error');
+      this.isSaving.set(false);
       return;
     }
     if (this.bannerForm.invalid) {
@@ -165,7 +207,8 @@ export class BannerDetailsComponent implements OnInit {
           console.error(`Campo inválido: ${key}`, control.errors);
         }
       });
-
+      this.showCustomAlert('Por favor completa todos los campos requeridos en el banner.', 'error');
+      this.isSaving.set(false);
       return;
     }
 
@@ -191,25 +234,33 @@ export class BannerDetailsComponent implements OnInit {
     const bannerId = this.banner().id;
     const isNew = bannerId === 'new';
 
+    try {
+      let result: BannerEntity;
 
-    let result: BannerEntity;
+      if (isNew) {
+        console.log('Creando nuevo banner con datos:', dto);
+        result = await firstValueFrom(
+          this.bannersService.createBanner(dto, this.imageFile)
+        );
+        this.router.navigate(['/admin/banners', result.id]);
+      } else {
+        console.log('Actualizando banner existente con ID:', bannerId, 'y datos:', dto);
+        result = await firstValueFrom(
+          this.bannersService.updateBanner(bannerId, dto, this.imageFile)
+        );
+      }
 
-    if (isNew) {
-      console.log('Creando nuevo banner con datos:', dto);
-      result = await firstValueFrom(
-        this.bannersService.createBanner(dto, this.imageFile)
-      );
-      this.router.navigate(['/admin/banners', result.id]);
-    } else {
-      console.log('Actualizando banner existente con ID:', bannerId, 'y datos:', dto);
-      result = await firstValueFrom(
-        this.bannersService.updateBanner(bannerId, dto, this.imageFile)
-      );
+      this.showCustomAlert('¡Banner guardado correctamente!', 'success');
+      this.wasSaved.set(true);
+      console.log('Operación exitosa, banner guardado:', result);
+      setTimeout(() => this.wasSaved.set(false), 3000);
+    } catch (error) {
+      console.error('Error saving banner:', error);
+      this.showCustomAlert('Error al guardar el banner. Por favor, intente nuevamente.', 'error');
+    } finally {
+      // Desactivar estado de guardado siempre al final
+      this.isSaving.set(false);
     }
-
-    this.wasSaved.set(true);
-    console.log('Operación exitosa, banner guardado:', result);
-    setTimeout(() => this.wasSaved.set(false), 3000);
   }
 
 

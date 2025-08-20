@@ -91,8 +91,8 @@ export class BannersService {
 
         if (imageFile) {
             return this.uploadEntityImage(imageFile, 'ban').pipe(
-                switchMap((fileName) => {
-                    const dto = { ...data, image: fileName };
+                switchMap((imageUrl) => {
+                    const dto = { ...data, image: imageUrl };
                     return this.http.post<BannerEntity>(`${API_URL}/banners`, dto);
                 }),
                 tap((created) => this.bannerCache.set(created.id, created))
@@ -114,8 +114,8 @@ export class BannersService {
 
         if (imageFile) {
             return this.uploadEntityImage(imageFile, 'ban').pipe(
-                switchMap((fileName) => {
-                    const dto = { ...data, image: fileName };
+                switchMap((imageUrl) => {
+                    const dto = { ...data, image: imageUrl };
                     return this.http.patch<BannerEntity>(`${API_URL}/banners/${id}`, dto);
                 }),
                 tap((updated) => this.bannerCache.set(updated.id, updated))
@@ -134,10 +134,10 @@ export class BannersService {
         formData.append('file', file);
 
         console.log('Uploading image to folder: ', formData);
-        return this.http.post<{ fileName: string; secureUrl: string }>(
+        return this.http.post<{ url: string; public_id: string }>(
             `${API_URL}/files/${folder}`,
             formData
-        ).pipe(map((resp) => resp.fileName));
+        ).pipe(map((resp) => resp.url));
 
 
     }

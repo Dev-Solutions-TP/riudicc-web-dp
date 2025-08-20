@@ -151,10 +151,7 @@
 
     </section>
 
-    <section
-        formArrayName="traducciones"
-        class="mb-20"
-    >
+    <section formArrayName="traducciones">
         <h2 class="text-lg font-bold">Traducciones (Texto alternativo)</h2>
 
         @if (traduccionesFormArray.length > 0) {
@@ -196,7 +193,7 @@
             </div>
 
             <button
-                class="btn btn-outline btn-error mt-1"
+                class="btn btn-outline btn-error"
                 type="button"
                 (click)="removeTraduccion(i)"
             >
@@ -205,8 +202,6 @@
         </div>
         }
         }
-
-
         <button
             class="btn btn-primary mt-3"
             type="button"
@@ -215,17 +210,35 @@
             + Agregar Traducción
         </button>
 
-        <div class="flex justify-end">
-            <button
-                class="btn btn-success"
-                type="submit"
-            >Guardar</button>
-        </div>
-        @if(wasSaved()){
-        <div class="alert alert-success mt-2">Guardado correctamente</div>
-        }
     </section>
 
 
 
+    <div class="flex justify-end  mt-10">
+        <button
+            class="btn"
+            [class.btn-success]="!isSaving()"
+            [class.btn-outline]="isSaving()"
+            [disabled]="isSaving()"
+            type="submit"
+        >
+            @if (isSaving()) {
+            <span class="loading loading-spinner loading-sm"></span>
+            Guardando...
+            } @else {
+            Guardar
+            }
+        </button>
+    </div>
+
 </form>
+
+<!-- Sistema de alertas personalizado - FUERA DEL FORMULARIO -->
+<div class="mb-20">
+    <alert-message
+        [message]="alertMessage()"
+        [type]="alertType()"
+        [show]="showAlert()"
+        (onClose)="onAlertClose()"
+    ></alert-message>
+</div>
