@@ -106,13 +106,15 @@ export class InstitucionesService {
     ): Observable<InstitucionEntity> {
         console.log('createInstitucion', data, imageFiles);
         if (imageFiles && imageFiles.length) {
-            return this.uploadMultipleImages(imageFiles, 'inst').pipe(
-                switchMap((imageNames) => {
+            return this.uploadMultipleImages(imageFiles, 'uni').pipe(
+                switchMap((uploadResults) => {
                     const dto = {
                         ...data,
-                        images: imageNames.map((fileName, i) => ({
-                            url: fileName,
+                        images: uploadResults.map((result, i) => ({
+                            url: result.serverName,       // URL completa de Cloudinary
+                            public_id: result.publicId,   // Public ID para operaciones
                             altText: data.images?.[i]?.altText || '',
+                            orden: i + 1,
                         })),
                     };
                     console.log('DTO con imágenes:', dto);
@@ -123,21 +125,48 @@ export class InstitucionesService {
 
         return this.http.post<InstitucionEntity>(`${API_URL}/instituciones`, data);
     }
+
     updateInstitucion(
         id: string,
         data: Partial<UpdateInstitucionDto>,
         imageFiles?: File[]
     ): Observable<InstitucionEntity> {
+        console.log('DTO UPDATE con imágenes:', data, imageFiles);
+
         if (imageFiles && imageFiles.length) {
-            return this.uploadMultipleImages(imageFiles, 'inst').pipe(
-                switchMap((imageNames) => {
+            return this.uploadMultipleImages(imageFiles, 'uni').pipe(
+                switchMap((uploadResults) => {
+                    console.log('Resultados de subida:', uploadResults);
+
+                    // Crear una copia de las imágenes originales
+                    const finalImages = [...(data.images || [])];
+
+                    // Para cada resultado de subida, buscar en data.images dónde está el nombre original
+                    // y reemplazar con el nombre del servidor
+                    uploadResults.forEach((result) => {
+                        const { originalName, serverName, publicId } = result;
+
+                        // Buscar en finalImages donde la url coincida con el nombre original
+                        const imageIndex = finalImages.findIndex(img => img.url === originalName);
+
+                        if (imageIndex !== -1) {
+                            // Actualizar con el nombre del servidor y public_id
+                            finalImages[imageIndex] = {
+                                ...finalImages[imageIndex],
+                                url: serverName,           // URL completa de Cloudinary
+                                public_id: publicId,       // Public ID para operaciones
+                                orden: imageIndex + 1,
+                            };
+                            console.log(`Imagen ${imageIndex} actualizada: ${originalName} -> ${serverName}`);
+                        }
+                    });
+
                     const dto = {
                         ...data,
-                        images: imageNames.map((fileName, i) => ({
-                            url: fileName,
-                            altText: data.images?.[i]?.altText || '',
-                        })),
+                        images: finalImages,
                     };
+
+                    console.log('DTO UPDATE con imágenes antes de enviar a servicio:', dto);
                     return this.http.patch<InstitucionEntity>(`${API_URL}/instituciones/${id}`, dto);
                 })
             );
@@ -146,17 +175,29 @@ export class InstitucionesService {
         return this.http.patch<InstitucionEntity>(`${API_URL}/instituciones/${id}`, data);
     }
 
-    uploadMultipleImages(images?: File[], folder: string = 'uni'): Observable<string[]> {
-        if (!images) return of([]);
-        const uploadObservables = Array.from(images).map((imageFile) => this.uploadImage(imageFile, folder));
+    uploadMultipleImages(images?: File[], folder: string = 'uni'): Observable<{ originalName: string, serverName: string, publicId: string }[]> {
+        if (!images || images.length === 0) return of([]);
+
+        // Filtrar archivos válidos (no undefined, no null)
+        const validImages = images.filter(img => img instanceof File);
+        if (validImages.length === 0) return of([]);
+
+        const uploadObservables = validImages.map((imageFile) => this.uploadImage(imageFile, folder));
         return forkJoin(uploadObservables);
     }
 
-    uploadImage(imageFile: File, folder: string): Observable<string> {
+    uploadImage(imageFile: File, folder: string): Observable<{ originalName: string, serverName: string, publicId: string }> {
         const formData = new FormData();
         formData.append('file', imageFile);
+
         return this.http
-            .post<{ fileName: string }>(`${API_URL}/files/${folder}`, formData)
-            .pipe(map((resp) => resp.fileName));
+            .post<{ url: string, public_id: string }>(`${API_URL}/files/${folder}`, formData)
+            .pipe(
+                map((resp) => ({
+                    originalName: imageFile.name,
+                    serverName: resp.url,
+                    publicId: resp.public_id
+                }))
+            );
     }
 }

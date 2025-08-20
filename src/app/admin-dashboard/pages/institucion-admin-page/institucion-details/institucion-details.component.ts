@@ -10,13 +10,17 @@ import { Router } from '@angular/router';
 import { InstitucionEntity, UpdateInstitucionDto } from '@home/pages/instituciones/interfaces/aliados.interface';
 import { InstitucionesService } from '@home/pages/instituciones/services/instituciones.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { AlertMessageComponent, AlertType } from '@dashboard/components/alert-message/alert-message.component';
 import { FormUtils } from '@shared/utils/form-utils';
 import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
+const API_URL = environment.baseUrl;
 
 @Component({
   selector: 'institucion-details',
   standalone: true,
-  imports: [ReactiveFormsModule, FormErrorLabelComponent],
+  imports: [ReactiveFormsModule, FormErrorLabelComponent, AlertMessageComponent],
   templateUrl: './institucion-details.component.html',
 })
 export class InstitucionDetailsComponent implements OnInit {
@@ -26,9 +30,18 @@ export class InstitucionDetailsComponent implements OnInit {
   router = inject(Router);
   institucionesService = inject(InstitucionesService);
 
-
-  wasSaved = signal(false);
+  // wasSaved = signal(false);
+  isSaving = signal(false); // Nuevo signal para el estado de guardado
   formUtils = FormUtils;
+
+  // Sistema de alertas con el nuevo componente
+  loading = signal(true);
+  isEditing = signal(false);
+
+  // Alertas
+  alertMessage = signal<string>('');
+  alertType = signal<AlertType>('success');
+  showAlert = signal(false);
 
   selectedImageFiles: File[] = [];
   previewImageUrls = signal<string[]>([]);
@@ -103,6 +116,18 @@ export class InstitucionDetailsComponent implements OnInit {
     imageGroup.get('url')?.setValue(file.name);
     imageGroup.get('url')?.markAsDirty();
     imageGroup.get('url')?.updateValueAndValidity();
+  }
+
+  // Método para mostrar alertas usando el nuevo componente
+  private showCustomAlert(message: string, type: AlertType = 'error') {
+    this.alertMessage.set(message);
+    this.alertType.set(type);
+    this.showAlert.set(true);
+  }
+
+  // Método para ocultar alertas
+  onAlertClose() {
+    this.showAlert.set(false);
   }
 
 
@@ -225,46 +250,78 @@ export class InstitucionDetailsComponent implements OnInit {
         url: [link.url, Validators.required],
       }));
     });
+
+    // Inicializar arrays de archivos e imágenes
+    this.selectedImageFiles = new Array(data.images.length).fill(undefined);
+
+    // Configurar URLs de vista previa - construir URL completa si es necesario
+    const previewUrls = data.images.map(img => {
+      // Si la URL ya es completa (comienza con http), usarla tal como está
+      if (img.url && (img.url.startsWith('http') || img.url.startsWith('blob:'))) {
+        return img.url;
+      }
+      // Si es solo un nombre de archivo, construir la URL completa
+      if (img.url) {
+        return `${API_URL}/files/uni/${img.url}`;
+      }
+      return '';
+    });
+
+    this.previewImageUrls.set(previewUrls);
   }
   // selectedImageFiles: File[] = [];
 
 
 
   async onSubmit() {
+    // Activar estado de guardado al inicio
+    this.isSaving.set(true);
 
-    // minimio una imagen
     console.log('Form values:', this.institucionForm.value);
-
-
-
-    const tieneImagenValida = this.imagesFormArray.controls.some(group => {
-      const url = group.get('url')?.value;
-      return !!url && typeof url === 'string' && url.trim() !== '';
-    });
-
-    if (!tieneImagenValida) {
-      alert('Debe subir al menos una imagen.');
-      return;
-    }
-
     console.log('Selected image files:', this.selectedImageFiles);
+
+    // Validaciones básicas
+    console.log('Traducciones:', this.traduccionesFormArray.length);
     if (this.traduccionesFormArray.length < 2) {
-      alert('Debe ingresar al menos dos traducciones.');
+      this.showCustomAlert('Debe ingresar al menos dos traducciones.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
+
     const idiomasSeleccionados = this.traduccionesFormArray.controls
       .map(ctrl => ctrl.get('idioma')?.value);
 
     const tieneEspanol = idiomasSeleccionados.includes('es');
     const tieneIngles = idiomasSeleccionados.includes('en');
 
-    console.log('Idiomas seleccionados:', idiomasSeleccionados);
     if (!tieneEspanol || !tieneIngles) {
-      alert('Debe incluir al menos una traducción en Español y otra en Inglés.');
+      this.showCustomAlert('Debe incluir al menos una traducción en Español y otra en Inglés.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
 
-    console.log('Form valid:', this.institucionForm.valid);
+    // Validar que la traducción tenga texto, es decir en cada campo el validador requerido sea comprobado
+    for (let i = 0; i < this.traduccionesFormArray.length; i++) {
+      const group = this.traduccionesFormArray.at(i);
+      if (group.invalid) {
+        group.markAllAsTouched();
+        this.showCustomAlert(`Por favor completa todos los campos requeridos en la traducción #${i + 1}.`, 'error');
+        this.isSaving.set(false); // Desactivar estado de guardado en caso de error
+        return;
+      }
+    }
+
+    // Validar que al menos haya una imagen válida
+    const tieneImagenValida = this.imagesFormArray.controls.some(group => {
+      const url = group.get('url')?.value;
+      return !!url && typeof url === 'string' && url.trim() !== '';
+    });
+
+    if (!tieneImagenValida) {
+      this.showCustomAlert('Debe subir al menos una imagen.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
+      return;
+    }
 
     if (this.institucionForm.invalid) {
       this.institucionForm.markAllAsTouched();
@@ -273,15 +330,12 @@ export class InstitucionDetailsComponent implements OnInit {
       Object.entries(this.institucionForm.controls).forEach(([key, control]) => {
         if (control.invalid) {
           console.error(`Campo inválido: ${key}`, control.errors);
+          this.showCustomAlert(`Por favor completa todos los campos requeridos en la institución.`, 'error');
         }
       });
-
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
-
-    console.log('Formulario válido, enviando datos...');
-
-
 
     const value = this.institucionForm.value;
 
@@ -299,33 +353,40 @@ export class InstitucionDetailsComponent implements OnInit {
       tags: value.tags?.split(',').map(t => t.trim()) ?? [],
       traducciones: value.traducciones as UpdateInstitucionDto['traducciones'],
       enlaces: value.enlaces as UpdateInstitucionDto['enlaces'],
-      images: value.images as UpdateInstitucionDto['images'],
+      images: (value.images as any[]).map((img, index) => ({
+        url: img.url,
+        altText: img.altText,
+      })) as UpdateInstitucionDto['images'],
     };
 
-    console.log('DTO to send:', dto);
     const id = this.institucion().id;
     const isNew = id === 'new';
 
-    if (this.selectedImageFiles.length > 0) {
-      const fileNames = await firstValueFrom(this.institucionesService.uploadMultipleImages(this.selectedImageFiles));
-      dto.images = fileNames.map((url, i) => ({
-        url,
-        altText: this.imagesFormArray.at(i).get('altText')?.value || '',
-      }));
+    try {
+      console.log('Enviando datos al servicio de instituciones... antes de enviar las imágenes son:', this.selectedImageFiles);
+
+      // Filtrar archivos válidos (no undefined)
+      const validImageFiles = this.selectedImageFiles.filter(file => file !== undefined) as File[];
+      console.log('Archivos de imagen válidos:', validImageFiles);
+
+      const result = isNew
+        ? await firstValueFrom(this.institucionesService.createInstitucion(dto, validImageFiles.length > 0 ? validImageFiles : undefined))
+        : await firstValueFrom(this.institucionesService.updateInstitucion(id, dto, validImageFiles.length > 0 ? validImageFiles : undefined));
+
+      if (isNew) {
+        this.router.navigate(['/admin/universidades', result.id]);
+      }
+
+      this.showCustomAlert('¡Institución guardada correctamente!', 'success');
+      // this.wasSaved.set(true);
+      // setTimeout(() => this.wasSaved.set(false), 3000);
+    } catch (error) {
+      console.error('Error saving institucion:', error);
+      this.showCustomAlert('Error al guardar la institución. Por favor, intente nuevamente.', 'error');
+    } finally {
+      // Desactivar estado de guardado siempre al final
+      this.isSaving.set(false);
     }
-    console.log('DTO with images:', dto.images);
-
-
-    const result = isNew
-      ? await firstValueFrom(this.institucionesService.createInstitucion(dto))
-      : await firstValueFrom(this.institucionesService.updateInstitucion(id, dto));
-
-    if (isNew) {
-      this.router.navigate(['/admin/universidades', result.id]);
-    }
-
-    this.wasSaved.set(true);
-    setTimeout(() => this.wasSaved.set(false), 3000);
   }
 
 

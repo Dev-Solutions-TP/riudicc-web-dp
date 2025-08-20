@@ -58,4 +58,6 @@ export interface UpdateInstitucionDto {
 }export interface ImageInput {
     url: string;
     altText: string;
+    public_id?: string;  // Public ID de Cloudinary para operaciones
+    orden?: number;      // Orden de la imagen
 }

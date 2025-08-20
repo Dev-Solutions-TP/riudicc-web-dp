@@ -7,7 +7,7 @@
             <!-- Logo universidad -->
             <figure class="w-40 h-20 rounded overflow-hidden flex justify-center items-center">
                 <img
-                    [src]="institucion().images | institucionImagePipe"
+                    [src]="institucion().images | imageNamePipe: 'uni'"
                     [alt]="institucion().images[0].altText"
                     class="object-contain w-full h-full p-2"
                 >

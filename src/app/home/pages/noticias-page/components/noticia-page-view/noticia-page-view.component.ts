@@ -3,7 +3,7 @@ import { getTraduccionNoticia } from '../../utils/noticia.utils';
 import { NoticiaEntity } from '../../interfaces/noticia.interface';
 
 import { NoticiaCarouselComponent } from "../noticia-carousel/noticia-carousel.component";
-import { InstitcionImagePipe } from "../../../instituciones/pipes/instituciones-project-image.pipe";
+
 import { ImageNamePipe } from '@shared/pipes/image.pipe';
 import { RouterLink } from '@angular/router';
 import { InstitucionEntity } from '@home/pages/instituciones/interfaces/aliados.interface';

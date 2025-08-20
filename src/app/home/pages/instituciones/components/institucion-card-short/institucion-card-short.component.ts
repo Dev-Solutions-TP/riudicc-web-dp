@@ -1,11 +1,12 @@
 import { Component, computed, inject, input, LOCALE_ID, signal } from '@angular/core';
 import { InstitucionEntity } from '../../interfaces/aliados.interface';
 import { RouterLink } from '@angular/router';
-import { InstitcionImagePipe } from "../../pipes/instituciones-project-image.pipe";
+
+import { ImageNamePipe } from '@shared/pipes/image.pipe';
 
 @Component({
   selector: 'institucion-card-short',
-  imports: [RouterLink, InstitcionImagePipe],
+  imports: [RouterLink, ImageNamePipe],
   templateUrl: './institucion-card-short.component.html',
 })
 export class InstitucionCardShortComponent {

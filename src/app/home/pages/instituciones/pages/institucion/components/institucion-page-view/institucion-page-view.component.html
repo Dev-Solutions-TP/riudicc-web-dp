@@ -34,7 +34,7 @@
             class="w-full flex justify-center items-start h-auto md:aspect-[4/3] md:items-center md:justify-center md:col-span-2 lg:col-span-1"
         >
             <img
-                [src]="institucion().images | institucionImagePipe"
+                [src]="institucion().images | imageNamePipe: 'uni'"
                 [alt]="imagenPrincipal()?.altText || traduccion()?.description"
                 class="w-full h-32  md:h-auto object-contain"
             >

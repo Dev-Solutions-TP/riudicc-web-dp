@@ -1,16 +1,17 @@
 import { Component, computed, inject, input, LOCALE_ID, signal } from '@angular/core';
 
 
-import { InstitcionImagePipe } from '../../pipes/instituciones-project-image.pipe';
+
 import { InstitucionEntity } from '../../interfaces/aliados.interface';
 import { RouterLink } from '@angular/router';
 import { LocalizationService } from '@shared/services/localization.service';
 import { getImagenPrincipal, getTraduccion } from '../../utils/institucion.utils';
+import { ImageNamePipe } from '@shared/pipes/image.pipe';
 
 
 @Component({
   selector: 'institucion-card',
-  imports: [InstitcionImagePipe, RouterLink],
+  imports: [ImageNamePipe, RouterLink],
   templateUrl: './institucion-card.component.html',
 })
 export class InstitucionCardComponent {

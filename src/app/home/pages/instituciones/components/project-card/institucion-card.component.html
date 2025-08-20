@@ -17,7 +17,7 @@
             <figure class="w-[35%] h-full flex items-center justify-center bg-white">
                 <div class="w-full h-full aspect-square flex items-center justify-center pl-4">
                     <img
-                        [src]="institucion().images | institucionImagePipe"
+                        [src]="institucion().images | imageNamePipe: 'uni'"
                         [alt]="imagenPrincipal()?.altText || traduccion()?.description"
                         class="max-w-full max-h-full object-contain"
                     >
@@ -65,7 +65,7 @@
         <div class="flex md:hidden card bg-base-100 shadow-sm ">
             <figure class="h-50 overflow-hidden">
                 <img
-                    [src]="institucion().images | institucionImagePipe"
+                    [src]="institucion().images | imageNamePipe: 'uni'"
                     [alt]="imagenPrincipal()?.altText || traduccion()?.description"
                     class="w-64 h-60 object-contain"
                 >

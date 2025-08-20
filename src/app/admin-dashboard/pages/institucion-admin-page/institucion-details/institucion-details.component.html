@@ -134,12 +134,17 @@
         >
 
             <!-- Input de archivo -->
-            <input
-                type="file"
-                accept="image/*"
-                class="file-input file-input-bordered w-full"
-                (change)="onSingleImageSelected($event, i)"
-            />
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Seleccionar Imagen</span>
+                </label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    class="file-input file-input-bordered w-full"
+                    (change)="onSingleImageSelected($event, i)"
+                />
+            </div>
 
             <!-- Vista previa -->
             @if (previewImageUrls()[i]) {
@@ -152,14 +157,34 @@
             </div>
             }
 
+            <!-- URL de la imagen -->
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">URL de la Imagen</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="url"
+                    placeholder="URL de la imagen"
+                    class="input input-bordered w-full"
+                    readonly
+                    tabindex="-1"
+                />
+            </div>
+
             <!-- Alt Text -->
-            <input
-                type="text"
-                formControlName="altText"
-                placeholder="Texto alternativo"
-                class="input input-bordered w-full"
-            />
-            <form-error-label [control]="image.get('altText')!" />
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Texto Alternativo</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="altText"
+                    placeholder="Texto alternativo"
+                    class="input input-bordered w-full"
+                />
+                <form-error-label [control]="image.get('altText')!" />
+            </div>
 
             <!-- Botón eliminar -->
             <button
@@ -188,18 +213,28 @@
             class="border p-3 mt-2 rounded-md space-y-2"
             [formGroupName]="i"
         >
-            <input
-                type="text"
-                formControlName="label"
-                placeholder="Texto visible"
-                class="input input-bordered w-full"
-            />
-            <input
-                type="text"
-                formControlName="url"
-                placeholder="URL del sitio"
-                class="input input-bordered w-full"
-            />
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Texto Visible del Enlace</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="label"
+                    placeholder="Texto visible"
+                    class="input input-bordered w-full"
+                />
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">URL del Enlace</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="url"
+                    placeholder="URL del sitio"
+                    class="input input-bordered w-full"
+                />
+            </div>
             <button
                 class="btn btn-outline btn-error"
                 type="button"
@@ -221,32 +256,52 @@
             class="border p-3 mt-2 rounded-md space-y-2"
             [formGroupName]="i"
         >
-            <select
-                formControlName="idioma"
-                class="select select-bordered w-full"
-            >
-                <option value="">Seleccione un idioma</option>
-                <option value="es">Español</option>
-                <option value="en">Inglés</option>
-            </select>
-            <input
-                type="text"
-                formControlName="name"
-                placeholder="Nombre completo"
-                class="input input-bordered w-full"
-            />
-            <input
-                type="text"
-                formControlName="shortName"
-                placeholder="Nombre corto"
-                class="input input-bordered w-full"
-            />
-            <textarea
-                formControlName="description"
-                rows="3"
-                placeholder="Descripción"
-                class="textarea textarea-bordered w-full"
-            ></textarea>
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Idioma</span>
+                </label>
+                <select
+                    formControlName="idioma"
+                    class="select select-bordered w-full"
+                >
+                    <option value="">Seleccione un idioma</option>
+                    <option value="es">Español</option>
+                    <option value="en">Inglés</option>
+                </select>
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Nombre Completo</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="name"
+                    placeholder="Nombre completo"
+                    class="input input-bordered w-full"
+                />
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Nombre Corto</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="shortName"
+                    placeholder="Nombre corto"
+                    class="input input-bordered w-full"
+                />
+            </div>
+            <div>
+                <label class="label">
+                    <span class="label-text font-semibold">Descripción</span>
+                </label>
+                <textarea
+                    formControlName="description"
+                    rows="3"
+                    placeholder="Descripción"
+                    class="textarea textarea-bordered w-full"
+                ></textarea>
+            </div>
             <button
                 class="btn btn-outline btn-error"
                 type="button"
@@ -261,13 +316,32 @@
         >+ Agregar Traducción</button>
 
     </section>
-    <div class="flex justify-end mb-20">
+    <div class="flex justify-end mt-10">
         <button
-            class="btn btn-success"
+            class="btn"
+            [class.btn-success]="!isSaving()"
+            [class.btn-outline]="isSaving()"
+            [disabled]="isSaving()"
             type="submit"
-        >Guardar</button>
+        >
+            @if (isSaving()) {
+            <span class="loading loading-spinner loading-sm"></span>
+            Guardando...
+            } @else {
+            Guardar
+            }
+        </button>
     </div>
-    @if(wasSaved()) {
-    <div class="alert alert-success mt-2">Guardado correctamente</div>
-    }
 </form>
+
+<!-- Sistema de alertas personalizado - FUERA DEL FORMULARIO -->
+
+<div class="mb-20">
+
+    <alert-message
+        [message]="alertMessage()"
+        [type]="alertType()"
+        [show]="showAlert()"
+        (onClose)="onAlertClose()"
+    ></alert-message>
+</div>
