@@ -6,11 +6,11 @@ import { NoticiaEntity } from '../../../../home/pages/noticias-page/interfaces/n
 import { getTraduccionNoticia, getTraduccionNoticiaFromEntity } from '../../../../home/pages/noticias-page/utils/noticia.utils';
 import { LocalizationService } from '@shared/services/localization.service';
 import { AppText } from '@shared/utils/app-text';
-import { NoticiaImagePipe } from "../../../../home/pages/noticias-page/pipes/noticia-project-image.pipe";
+
 
 @Component({
   selector: 'noticias-table',
-  imports: [RouterLink, DatePipe, NoticiaImagePipe, TitleCasePipe],
+  imports: [RouterLink, DatePipe, ImageNamePipe, TitleCasePipe],
   templateUrl: './noticia-table.component.html',
 })
 export class ProductTableComponent {

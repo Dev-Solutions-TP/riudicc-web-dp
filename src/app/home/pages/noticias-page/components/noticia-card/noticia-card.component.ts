@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, LOCALE_ID, signal } from '@angular/core';
 import { NoticiaEntity } from '../../interfaces/noticia.interface';
-import { NoticiaImagePipe } from '../../pipes/noticia-project-image.pipe';
+
 import { RouterLink } from '@angular/router';
 
 import { LocalizationService } from '@shared/services/localization.service';
@@ -34,6 +34,7 @@ export class NoticiaCardComponent {
   });
 
   imagenPrincipal = computed(() => {
+
     const imagenes = this.noticia().images ?? [];
     // Si alguna tiene orden = 1, úsala
     const conOrden1 = imagenes.find(img => img.orden === 1);

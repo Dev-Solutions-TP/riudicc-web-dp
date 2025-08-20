@@ -41,6 +41,7 @@ export class NoticiaDetailsComponent implements OnInit {
   institucionesService = inject(InstitucionesService);
 
   wasSaved = signal(false);
+  isSaving = signal(false); // Nuevo signal para el estado de guardado
   formUtils = FormUtils;
 
   // Sistema de alertas con el nuevo componente
@@ -56,6 +57,24 @@ export class NoticiaDetailsComponent implements OnInit {
   selectedImageFiles: File[] = [];
   previewImageUrls = signal<string[]>([]);
   selectedInstituciones = signal<string[]>([]);
+
+  // Método helper para construir URLs de imagen
+  private buildImageUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+
+    // Si la URL ya es completa (Cloudinary u otras URLs), usarla tal como está
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('blob:')) {
+      return imageUrl;
+    }
+
+    // Si es solo un nombre de archivo (sistema anterior), construir la URL completa
+    return `${API_URL}/files/not/${imageUrl}`;
+  }
+
+  // Método público para usar en el template
+  getImageUrl(imageUrl: string): string {
+    return this.buildImageUrl(imageUrl);
+  }
 
   // Custom validator para el FormArray de imágenes
   private imagesValidator(control: AbstractControl): ValidationErrors | null {
@@ -132,6 +151,7 @@ export class NoticiaDetailsComponent implements OnInit {
       this.fb.group({
         url: ['', Validators.required],
         altText: ['', Validators.required],
+        public_id: [''], // Agregar public_id al FormGroup
       })
     );
     this.selectedImageFiles.push(undefined as any);
@@ -149,11 +169,14 @@ export class NoticiaDetailsComponent implements OnInit {
     updatedPreviews[index] = URL.createObjectURL(file);
     this.previewImageUrls.set(updatedPreviews);
 
-    // Setear nombre de archivo en el campo `url`
+    // Setear nombre de archivo en el campo `url` y limpiar public_id
     const imageGroup = this.imagesFormArray.at(index);
     imageGroup.get('url')?.setValue(file.name);
     imageGroup.get('url')?.markAsDirty();
     imageGroup.get('url')?.updateValueAndValidity();
+
+    // Limpiar public_id porque es una nueva imagen
+    imageGroup.get('public_id')?.setValue('');
 
     // Revalidar el FormArray después de seleccionar imagen
     this.imagesFormArray.updateValueAndValidity();
@@ -218,6 +241,7 @@ export class NoticiaDetailsComponent implements OnInit {
       this.fb.group({
         url: ['', Validators.required],
         altText: ['', Validators.required],
+        public_id: [''], // Agregar public_id al FormGroup
       })
     );
     this.selectedImageFiles.push(undefined as any);
@@ -316,6 +340,7 @@ export class NoticiaDetailsComponent implements OnInit {
         this.fb.group({
           url: [img.url, Validators.required],
           altText: [img.altText],
+          public_id: [img.public_id || ''], // Poblar el public_id desde la noticia
         })
       );
     });
@@ -337,23 +362,15 @@ export class NoticiaDetailsComponent implements OnInit {
     // Inicializar arrays de archivos e imágenes
     this.selectedImageFiles = new Array(noticia.images.length).fill(undefined);
 
-    // Configurar URLs de vista previa - construir URL completa si es necesario
-    const previewUrls = noticia.images.map(img => {
-      // Si la URL ya es completa (comienza con http), usarla tal como está
-      if (img.url && (img.url.startsWith('http') || img.url.startsWith('blob:'))) {
-        return img.url;
-      }
-      // Si es solo un nombre de archivo, construir la URL completa
-      if (img.url) {
-        return `${API_URL}/files/not/${img.url}`;
-      }
-      return '';
-    });
-
+    // Configurar URLs de vista previa usando el método helper
+    const previewUrls = noticia.images.map(img => this.buildImageUrl(img.url));
     this.previewImageUrls.set(previewUrls);
   }
 
   async onSubmit() {
+    // Activar estado de guardado al inicio
+    this.isSaving.set(true);
+
     console.log('Form values:', this.noticiaForm.value);
     console.log('Selected instituciones:', this.selectedInstituciones());
     console.log('Selected image files:', this.selectedImageFiles);
@@ -363,6 +380,7 @@ export class NoticiaDetailsComponent implements OnInit {
     console.log('Traducciones:', this.traduccionesFormArray.length);
     if (this.traduccionesFormArray.length < 2) {
       this.showCustomAlert('Debe ingresar al menos dos traducciones.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
 
@@ -374,6 +392,7 @@ export class NoticiaDetailsComponent implements OnInit {
 
     if (!tieneEspanol || !tieneIngles) {
       this.showCustomAlert('Debe incluir al menos una traducción en Español y otra en Inglés.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
 
@@ -383,6 +402,7 @@ export class NoticiaDetailsComponent implements OnInit {
       if (group.invalid) {
         group.markAllAsTouched();
         this.showCustomAlert(`Por favor completa todos los campos requeridos en la traducción #${i + 1}.`, 'error');
+        this.isSaving.set(false); // Desactivar estado de guardado en caso de error
         return;
       }
     }
@@ -397,6 +417,7 @@ export class NoticiaDetailsComponent implements OnInit {
       // Marcar el FormArray como touched para que se muestre el error
       this.imagesFormArray.markAsTouched();
       this.showCustomAlert('Debe subir al menos una imagen.', 'error');
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
 
@@ -413,6 +434,7 @@ export class NoticiaDetailsComponent implements OnInit {
 
         }
       });
+      this.isSaving.set(false); // Desactivar estado de guardado en caso de error
       return;
     }
 
@@ -439,6 +461,7 @@ export class NoticiaDetailsComponent implements OnInit {
         url: img.url,
         altText: img.altText,
         orden: index + 1,
+        public_id: img.public_id,
       })) as ImageEntity[],
       enlaces: formValue.enlaces as Enlace[],
     };
@@ -446,31 +469,7 @@ export class NoticiaDetailsComponent implements OnInit {
     const id = this.noticia().id;
     const isNew = id === 'new';
 
-    // Subir imágenes si hay archivos seleccionados (comentado por ahora)
-    /*
-    if (this.selectedImageFiles.some(file => file)) {
-      try {
-        const validFiles = this.selectedImageFiles.filter(file => file);
-        if (validFiles.length > 0) {
-          const fileNames = await firstValueFrom(this.noticiasService.uploadMultipleImages(validFiles));
-          
-          // Actualizar URLs de imágenes con las subidas
-          let fileIndex = 0;
-          noticiaLike.images = this.imagesFormArray.controls.map((group, i) => {
-            const url = this.selectedImageFiles[i] ? fileNames[fileIndex++] : group.get('url')?.value;
-            return {
-              url,
-              altText: group.get('altText')?.value || '',
-            };
-          });
-        }
-      } catch (error) {
-        console.error('Error uploading images:', error);
-        alert('Error al subir las imágenes. Por favor, intente nuevamente.');
-        return;
-      }
-    }
-    */
+
 
     // Agregar instituciones seleccionadas
     const selectedInstitucionesData = this.instituciones()
@@ -501,6 +500,9 @@ export class NoticiaDetailsComponent implements OnInit {
     } catch (error) {
       console.error('Error saving noticia:', error);
       this.showCustomAlert('Error al guardar la noticia. Por favor, intente nuevamente.', 'error');
+    } finally {
+      // Desactivar estado de guardado siempre al final
+      this.isSaving.set(false);
     }
   }
 }

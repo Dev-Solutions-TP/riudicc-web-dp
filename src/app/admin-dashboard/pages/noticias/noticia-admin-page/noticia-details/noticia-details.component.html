@@ -137,10 +137,10 @@
       </div>
 
       <!-- Vista previa -->
-      @if (previewImageUrls()[i]) {
+      @if (previewImageUrls()[i] || imagesFormArray.at(i).get('url')?.value) {
       <div class="mt-2">
         <img
-          [src]="previewImageUrls()[i]"
+          [src]="previewImageUrls()[i] || getImageUrl(imagesFormArray.at(i).get('url')?.value)"
           alt="Vista previa"
           class="w-full max-w-xs rounded shadow-md"
         />
@@ -340,9 +340,19 @@
 
   <div class="flex justify-end mt-10">
     <button
-      class="btn btn-success"
+      class="btn"
+      [class.btn-success]="!isSaving()"
+      [class.btn-outline]="isSaving()"
+      [disabled]="isSaving()"
       type="submit"
-    >Guardar</button>
+    >
+      @if (isSaving()) {
+      <span class="loading loading-spinner loading-sm"></span>
+      Guardando...
+      } @else {
+      Guardar
+      }
+    </button>
   </div>
 
 </form>

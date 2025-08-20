@@ -180,7 +180,8 @@ export class NoticiasService {
                     const dto = {
                         ...data,
                         images: uploadResults.map((result, i) => ({
-                            url: result.serverName,
+                            url: result.serverName,       // URL completa de Cloudinary
+                            public_id: result.publicId,   // Public ID para operaciones
                             altText: data.images?.[i]?.altText || '',
                             orden: i + 1,
                         })),
@@ -209,16 +210,17 @@ export class NoticiasService {
                     // Para cada resultado de subida, buscar en data.images dónde está el nombre original
                     // y reemplazar con el nombre del servidor
                     uploadResults.forEach((result) => {
-                        const { originalName, serverName } = result;
+                        const { originalName, serverName, publicId } = result;
 
                         // Buscar en finalImages donde la url coincida con el nombre original
                         const imageIndex = finalImages.findIndex(img => img.url === originalName);
 
                         if (imageIndex !== -1) {
-                            // Actualizar con el nombre del servidor
+                            // Actualizar con el nombre del servidor y public_id
                             finalImages[imageIndex] = {
                                 ...finalImages[imageIndex],
-                                url: serverName,
+                                url: serverName,           // URL completa de Cloudinary
+                                public_id: publicId,       // Public ID para operaciones
                                 orden: imageIndex + 1,
                             };
                             console.log(`Imagen ${imageIndex} actualizada: ${originalName} -> ${serverName}`);
@@ -237,7 +239,9 @@ export class NoticiasService {
         }
 
         return this.http.patch<NoticiaEntity>(`${API_URL}/noticias/${id}`, data);
-    } uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<{ originalName: string, serverName: string }[]> {
+    }
+
+    uploadMultipleImages(images?: File[], folder: string = 'not'): Observable<{ originalName: string, serverName: string, publicId: string }[]> {
         if (!images || images.length === 0) return of([]);
 
         // Filtrar archivos válidos (no undefined, no null)
@@ -248,16 +252,17 @@ export class NoticiasService {
         return forkJoin(uploadObservables);
     }
 
-    uploadImage(imageFile: File, folder: string): Observable<{ originalName: string, serverName: string }> {
+    uploadImage(imageFile: File, folder: string): Observable<{ originalName: string, serverName: string, publicId: string }> {
         const formData = new FormData();
         formData.append('file', imageFile);
 
         return this.http
-            .post<{ fileName: string }>(`${API_URL}/files/${folder}`, formData)
+            .post<{ url: string, public_id: string }>(`${API_URL}/files/${folder}`, formData)
             .pipe(
                 map((resp) => ({
                     originalName: imageFile.name,
-                    serverName: resp.fileName
+                    serverName: resp.url,
+                    publicId: resp.public_id
                 }))
             );
     }

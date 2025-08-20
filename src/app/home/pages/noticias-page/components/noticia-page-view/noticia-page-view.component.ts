@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, InputSignal, LOCALE_ID, signal, WritableSignal } from '@angular/core';
 import { getTraduccionNoticia } from '../../utils/noticia.utils';
 import { NoticiaEntity } from '../../interfaces/noticia.interface';
-import { NoticiaImagePipe } from "../../pipes/noticia-project-image.pipe";
+
 import { NoticiaCarouselComponent } from "../noticia-carousel/noticia-carousel.component";
 import { InstitcionImagePipe } from "../../../instituciones/pipes/instituciones-project-image.pipe";
 import { ImageNamePipe } from '@shared/pipes/image.pipe';

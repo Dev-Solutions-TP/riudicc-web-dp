@@ -14,24 +14,37 @@ export class ImageNamePipe implements PipeTransform {
             return './assets/images/no-image.jpg';
         }
 
-        // ✅ Si es string (ej. solo el nombre del archivo)
+        // ✅ Si es string (ej. solo el nombre del archivo o URL completa)
         if (typeof value === 'string') {
-            return `${API_URL}/files/${path}/${value}`;
+            return this.buildImageUrl(value, path);
         }
 
         // ✅ Si es un objeto único con url
         if (this.isImageEntity(value)) {
-            return `${API_URL}/files/${path}/${value.url}`;
+            return this.buildImageUrl(value.url, path);
         }
 
         // ✅ Si es un arreglo
         if (Array.isArray(value)) {
             const image = value.find(this.isImageEntity); // toma el primero válido
-            return image ? `${API_URL}/files/${path}/${image.url}` : './assets/images/no-image.jpg';
+            return image ? this.buildImageUrl(image.url, path) : './assets/images/no-image.jpg';
         }
 
         // 🛑 Valor no reconocido
         return './assets/images/no-image.jpg';
+    }
+
+    // Método helper para construir URLs - misma lógica que en el componente
+    private buildImageUrl(imageUrl: string, path: string): string {
+        if (!imageUrl) return './assets/images/no-image.jpg';
+
+        // Si la URL ya es completa (Cloudinary u otras URLs), usarla tal como está
+        if (imageUrl.startsWith('http') || imageUrl.startsWith('blob:')) {
+            return imageUrl;
+        }
+
+        // Si es solo un nombre de archivo (sistema anterior), construir la URL completa
+        return `${API_URL}/files/${path}/${imageUrl}`;
     }
 
     private isImageEntity(obj: any): obj is ImageEntity {

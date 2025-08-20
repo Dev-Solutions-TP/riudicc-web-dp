@@ -37,7 +37,7 @@
             <div class="avatar">
               <div class="mask mask-squircle h-12 w-12">
                 <img
-                  [src]="noticia.images | noticiaImagePipe"
+                  [src]="noticia.images | imageNamePipe: 'not'"
                   [alt]="noticia.images[0]"
                 />
               </div>

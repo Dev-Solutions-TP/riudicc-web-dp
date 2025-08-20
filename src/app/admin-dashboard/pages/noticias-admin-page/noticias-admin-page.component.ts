@@ -25,7 +25,7 @@ export class NoticiasAdminPageComponent {
     }),
     loader: ({ request }) => {
       return this.noticiasSevice.getNoticiasUser({
-        offset: request.page * 9,
+        offset: request.page * 10,
         limit: request.limit,
       });
     },

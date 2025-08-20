@@ -2,7 +2,7 @@
 import { Component, computed, inject, input, LOCALE_ID, OnInit, signal } from '@angular/core';
 import { NoticiaEntity } from '@home/pages/noticias-page/interfaces/noticia.interface';
 import { LocalizationService } from '@shared/services/localization.service';
-import { NoticiaImagePipe } from "../../pages/noticias-page/pipes/noticia-project-image.pipe";
+
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ImageEntity } from '@home/interfaces/image.interface';
@@ -10,7 +10,7 @@ import { ImageNamePipe } from "../../../shared/pipes/image.pipe";
 
 @Component({
   selector: 'home-blog',
-  imports: [NoticiaImagePipe, DatePipe, RouterLink, ImageNamePipe],
+  imports: [ImageNamePipe, DatePipe, RouterLink, ImageNamePipe],
   templateUrl: './news-blog.component.html',
 })
 export class BlogComponent implements OnInit {
