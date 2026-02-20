@@ -1,1 +1,23 @@
-<p>not-found-page works!</p>,
+<page-title
+    [firstWord]="pageTitleFirstWord()"
+    [secondWord]="pageTitleSecondWord()"
+></page-title>
+
+<div class="max-w-[100rem] px-4 md:px-20 grid grid-cols-1">
+    <div class="flex flex-col items-center justify-center min-h-[45vh] text-center gap-5">
+        <h2 class="text-2xl md:text-3xl font-['Roboto'] font-bold">
+            {{ title() }}
+        </h2>
+
+        <p class="text-lg md:text-xl font-['Roboto'] max-w-2xl">
+            {{ description() }}
+        </p>
+
+        <a
+            routerLink="/"
+            class="btn btn-primary btn-wide"
+        >
+            {{ goHomeText() }}
+        </a>
+    </div>
+</div>

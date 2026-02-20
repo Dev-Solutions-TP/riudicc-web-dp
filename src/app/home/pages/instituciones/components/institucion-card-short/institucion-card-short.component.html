@@ -9,9 +9,25 @@
                 <img
                     [src]="institucion().images | imageNamePipe: 'uni'"
                     [alt]="institucion().images[0].altText"
-                    class="object-contain w-full h-full p-2"
+                    class="max-w-full max-h-full object-contain"
                 >
             </figure>
+
+            <!-- <figure class="w-40 h-20 flex-shrink-0 flex items-center justify-center bg-white overflow-hidden">
+  <img
+    [src]="institucion().images | imageNamePipe: 'uni'"
+    [alt]="institucion().images[0].altText"
+    class="max-w-full max-h-full object-contain"
+  >
+</figure> -->
+            <!-- <figure class="w-40 aspect-[2/1] flex-shrink-0 flex items-center justify-center  overflow-hidden">
+                <img
+                    [src]="institucion().images | imageNamePipe: 'uni'"
+                    [alt]="institucion().images[0].altText"
+                    class="max-w-full max-h-full object-contain"
+                >
+            </figure> -->
+
 
             <!-- Información -->
             <div class="flex flex-col justify-between h-full flex-grow">

@@ -80,6 +80,46 @@ export const AppText = {
             fr: `Restez à l\'écoute. Nous partagerons bientôt plus d'informations sur les projets sur lesquels nous travaillons.`,
         }
     },
+
+    observatorio: {
+        titleAux: {
+            es: '¡Estamos trabajando en mas proyectos!',
+            en: 'We are working on more projects!',
+            fr: 'Nous travaillons sur nos projets !',
+        },
+        descriptionAux: {
+            es: 'Espéralos muy pronto. Pronto compartiremos más información sobre en lo que estamos trabajando.',
+            en: 'Stay tuned. We will share more information about we are working on soon.',
+            fr: `Restez à l\'écoute. Nous partagerons bientôt plus d'informations sur les projets sur lesquels nous travaillons.`,
+        }
+    },
+    notFound: {
+        pageTitleFirstWord: {
+            es: 'Página',
+            en: 'Page',
+            fr: 'Page',
+        },
+        pageTitleSecondWord: {
+            es: 'No Encontrada',
+            en: 'Not Found',
+            fr: 'Non trouvée',
+        },
+        title: {
+            es: 'Error 404',
+            en: 'Error 404',
+            fr: 'Erreur 404',
+        },
+        description: {
+            es: 'La página que estás buscando no existe o fue movida. Puedes volver al inicio para continuar navegando.',
+            en: 'The page you are looking for does not exist or has been moved. You can return home to continue browsing.',
+            fr: `La page que vous recherchez n'existe pas ou a été déplacée. Vous pouvez revenir à l'accueil pour continuer à naviguer.`,
+        },
+        goHome: {
+            es: 'Ir al inicio',
+            en: 'Go Home',
+            fr: `Aller à l'accueil`,
+        },
+    },
     instituciones: {
         title: {
             es: 'Socios',

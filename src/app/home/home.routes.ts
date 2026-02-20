@@ -13,6 +13,7 @@ import { InstitucionPageComponent } from "./pages/instituciones/pages/institucio
 import { NoticiasPageComponent } from "@noticias/noticias-page.component";
 import { NoticiaPageComponent } from "@noticias/pages/noticia-page/noticia-page.component";
 import { WorkPackagesPageComponent } from "./pages/WorkPackagesPageComponent/work-packages-page.component";
+import { ObservatorioPageComponent } from "./pages/observatorio/observatorio-page.component";
 
 
 
@@ -79,6 +80,11 @@ export const homeRoutes: Routes = [
                 path: 'projects',
                 title: 'Poyectos Inter Institucionales',
                 component: SociedaEuPageComponent,
+            },
+            {
+                path: 'observatory',
+                title: 'Observatorio',
+                component: ObservatorioPageComponent,
             },
             {
                 path: 'workPackages',

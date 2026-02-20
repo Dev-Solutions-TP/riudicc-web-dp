@@ -119,6 +119,26 @@
                     {{ getTitle("partners") }}
                 </a>
             </ul>
+            <ul class="menu menu-horizontal px-1">
+                <a
+                    [routerLink]="'projects'"
+                    routerLinkActive="text-info"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
+                >
+                    {{ getTitle("projects") }}
+                </a>
+            </ul>
+            <ul class="menu menu-horizontal px-1">
+                <a
+                    [routerLink]="'observatory'"
+                    routerLinkActive="text-info"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
+                >
+                    {{ getTitle("observatorio") }}
+                </a>
+            </ul>
 
             <!-- Dropdown "Acerca de" -->
             <div class="dropdown dropdown-end">
@@ -155,14 +175,14 @@
                         >
                             {{ getTitle("about") }}
                         </a></li>
-                    <li><a
+                    <!-- <li><a
                             [routerLink]="'projects'"
                             routerLinkActive="text-info"
                             [routerLinkActiveOptions]="{ exact: true }"
                             class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
                         >
                             {{ getTitle("projects") }}
-                        </a></li>
+                        </a></li> -->
                     <li><a
                             [routerLink]="'workPackages'"
                             routerLinkActive="text-info"
@@ -171,6 +191,14 @@
                         >
                             {{ getTitle("workPackages") }}
                         </a></li>
+                    <!-- <li><a
+                                [routerLink]="'observatorio'"
+                                routerLinkActive="text-info"
+                                [routerLinkActiveOptions]="{ exact: true }"
+                                class="hover:text-primary hover:bg-primary/10 transition px-4 py-2 rounded-md"
+                            >
+                                {{ getTitle("observatorio") }}
+                            </a></li> -->
                 </ul>
             </div>
 

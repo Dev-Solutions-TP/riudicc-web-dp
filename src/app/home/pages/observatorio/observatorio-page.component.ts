@@ -1,21 +1,17 @@
 import { Component, inject } from '@angular/core';
-import { PageTitleComponent } from '@home/components/page-title/page-title.component';
-import { ProjectCardComponent } from './components/project-card/project-card.component';
-import { SociedadEuService } from './services/sociedad.service';
-
 import { rxResource } from '@angular/core/rxjs-interop';
 import { LocalizationService } from '@shared/services/localization.service';
 import { AppText } from '@shared/utils/app-text';
+import { SociedadEuService } from '../sociedad-eu-page/services/sociedad.service';
+import { PageTitleComponent } from "@home/components/page-title/page-title.component";
 import { RouterLink } from '@angular/router';
 
-
 @Component({
-  selector: 'app-socieda-eu-page',
+  selector: 'app-observatorio-page-component',
   imports: [PageTitleComponent, RouterLink],
-  templateUrl: './sociedad-eu-page.component.html',
+  templateUrl: './observatorio-page.component.html',
 })
-export class SociedaEuPageComponent {
-
+export class ObservatorioPageComponent {
   private sociedadService = inject(SociedadEuService);
   private lang = inject(LocalizationService);
 
@@ -30,13 +26,9 @@ export class SociedaEuPageComponent {
   });
 
   viewMoreText = this.lang.viewMoreText;
-  titulo = this.lang.getText(AppText.ourProject.titleAux);
-  descripcion = this.lang.getText(AppText.ourProject.descriptionAux);
+  titulo = this.lang.getText(AppText.observatorio.titleAux);
+  descripcion = this.lang.getText(AppText.observatorio.descriptionAux);
 
   goHomeText = this.lang.getText(AppText.notFound.goHome, 'Go Home');
 
-
-
 }
-
-
