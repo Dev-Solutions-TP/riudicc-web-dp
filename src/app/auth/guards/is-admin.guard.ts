@@ -25,3 +25,12 @@ export const IsAdminOrOwnerGuard: CanMatchFn = async (
   return authService.isAdmin() || authService.isOwner();
 };
 
+
+export const IsAdminOrEditorGuard: CanMatchFn = async (
+  route: Route,
+  segments: UrlSegment[]
+) => {
+  const authService = inject(AuthService);
+  await firstValueFrom(authService.checkAuthStatus());
+  return authService.isAdmin() || authService.isEditor();
+};

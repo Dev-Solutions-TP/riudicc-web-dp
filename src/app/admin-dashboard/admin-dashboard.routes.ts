@@ -9,6 +9,7 @@ import { NoticiaDetailsComponent } from './pages/noticias/noticia-admin-page/not
 import { BannerAdminPageComponent } from './pages/banner-admin-page/banner-admin-page/banner-admin-page.component';
 import { InstitucionAdminPageComponent } from './pages/institucion-admin-page/institucion-admin-page/institucion-admin-page.component';
 import { NoticiaAdminPageComponent } from './pages/noticias/noticia-admin-page/noticia-admin-page.component';
+import { UsuariosAdminPageComponent } from './pages/usuarios-admin-page/usuarios-admin-page.component';
 
 
 export const adminDashboardRoutes: Routes = [
@@ -17,6 +18,11 @@ export const adminDashboardRoutes: Routes = [
     component: AdminDashboardLayoutComponent,
     canMatch: [IsAdminOrOwnerGuard],
     children: [
+      {
+        path: 'usuarios',
+        component: UsuariosAdminPageComponent,
+        canMatch: [IsAdminGuard],
+      },
       {
         path: 'banners',
         component: BannersAdminPageComponent,

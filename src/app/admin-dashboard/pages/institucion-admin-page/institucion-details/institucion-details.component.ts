@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, computed, OnInit, inject, input, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 import { InstitucionEntity, UpdateInstitucionDto } from '@home/pages/instituciones/interfaces/aliados.interface';
 import { InstitucionesService } from '@home/pages/instituciones/services/instituciones.service';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
@@ -29,6 +30,8 @@ export class InstitucionDetailsComponent implements OnInit {
   fb = inject(FormBuilder);
   router = inject(Router);
   institucionesService = inject(InstitucionesService);
+  authService = inject(AuthService);
+  isEditor = computed(() => this.authService.isEditor());
 
   // wasSaved = signal(false);
   isSaving = signal(false); // Nuevo signal para el estado de guardado

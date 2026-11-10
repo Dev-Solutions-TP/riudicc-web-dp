@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -11,6 +11,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NoticiaEntity, Traduccion } from '@home/pages/noticias-page/interfaces/noticia.interface';
+import { AuthService } from '@auth/services/auth.service';
 import { NoticiasService } from '@home/pages/noticias-page/services/noticia.service';
 import { InstitucionEntity } from '@home/pages/instituciones/interfaces/aliados.interface';
 import { InstitucionesService } from '@home/pages/instituciones/services/instituciones.service';
@@ -38,6 +39,8 @@ export class NoticiaDetailsComponent implements OnInit {
   router = inject(Router);
   fb = inject(FormBuilder);
   noticiasService = inject(NoticiasService);
+  authService = inject(AuthService);
+  isEditor = computed(() => this.authService.isEditor());
   institucionesService = inject(InstitucionesService);
 
   wasSaved = signal(false);

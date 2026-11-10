@@ -15,6 +15,8 @@ export class AdminDashboardLayoutComponent {
 
   isOwner = computed(() => this.authService.isOwner());
   isAdmin = computed(() => this.authService.isAdmin());
+  isEditor = computed(() => this.authService.isEditor());
+  isSuper = computed(() => this.authService.isSuper());
 
 
 

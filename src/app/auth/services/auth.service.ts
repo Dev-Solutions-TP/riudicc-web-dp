@@ -45,7 +45,7 @@ export class AuthService {
 
     user = computed(() => this._user());
     token = computed(() => this._token());
-    isAdmin = computed(() => this._user()?.roles.includes('admin') ?? false);
+    isAdmin = computed(() => this._user()?.roles.some(role => role === 'admin' || role === 'super') ?? false);
     isOwner = computed(() => this._user()?.roles.includes('owner') ?? false);
 
 
