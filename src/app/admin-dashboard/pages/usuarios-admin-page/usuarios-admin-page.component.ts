@@ -1,130 +1,202 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '@auth/services/auth.service';
-import { environment } from 'src/environments/environment';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-
-interface InstitutionOption {
-  id: string;
-  traducciones?: Array<{ name: string; idioma: string }>;
-  codigo?: string;
-}
+import { AuthService } from '@auth/services/auth.service';
+import { UsersAdminService } from './users-admin.service';
+import { InstitutionOption, UserEntity } from './user-admin.interface';
 
 @Component({
   selector: 'app-usuarios-admin-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <h1 class="text-2xl font-bold">Crear usuario</h1>
-    <p class="mt-2 text-slate-600">Crea editores o cuentas administradoras de una institución.</p>
-
-    <form class="mt-6 max-w-2xl space-y-4" [formGroup]="form" (ngSubmit)="submit()">
-      <label class="form-control w-full">
-        <span class="label-text mb-1">Nombre completo</span>
-        <input class="input input-bordered" formControlName="fullName" />
-      </label>
-      <label class="form-control w-full">
-        <span class="label-text mb-1">Correo electrónico</span>
-        <input class="input input-bordered" type="email" formControlName="email" />
-      </label>
-      <label class="form-control w-full">
-        <span class="label-text mb-1">Contraseña temporal</span>
-        <input class="input input-bordered" type="password" formControlName="password" />
-      </label>
-      <label class="form-control w-full">
-        <span class="label-text mb-1">Rol</span>
-        <select class="select select-bordered" formControlName="role" (change)="onRoleChange()">
-          <option value="editor">Editor</option>
-          <option value="user">Usuario de institución</option>
-          @if (auth.isSuper()) {
-            <option value="admin">Administrador</option>
-          }
-        </select>
-      </label>
-      @if (form.controls.role.value === 'user') {
-        <label class="form-control w-full">
-          <span class="label-text mb-1">Institución</span>
-          <select class="select select-bordered" formControlName="institucionId">
-            <option value="">Seleccione una institución</option>
-            @for (institution of institutions(); track institution.id) {
-              <option [value]="institution.id">{{ institutionName(institution) }}</option>
-            }
-          </select>
-        </label>
-      }
-      @if (message()) {
-        <p class="text-sm" [class.text-error]="isError()" [class.text-success]="!isError()">{{ message() }}</p>
-      }
-      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || saving()">
-        {{ saving() ? 'Guardando…' : 'Crear usuario' }}
-      </button>
-    </form>
-  `,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './usuarios-admin-page.component.html',
 })
 export class UsuariosAdminPageComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly http = inject(HttpClient);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly service = inject(UsersAdminService);
   readonly auth = inject(AuthService);
+
+  readonly users = signal<UserEntity[]>([]);
   readonly institutions = signal<InstitutionOption[]>([]);
-  readonly message = signal('');
-  readonly isError = signal(false);
+  readonly count = signal(0);
+  readonly page = signal(0);
+  readonly limit = 10;
+  readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly error = signal('');
+  readonly success = signal('');
+  readonly editId = signal<string | null>(null);
+  readonly formMode = signal(false);
+  readonly editingUser = signal<UserEntity | null>(null);
 
   readonly form = this.fb.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.minLength(2)]],
+    fullName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: [''],
     role: ['editor', Validators.required],
     institucionId: [''],
   });
 
   constructor() {
-    this.http.get<{ items: InstitutionOption[] }>(`${environment.baseUrl}/instituciones?limit=100`)
-      .subscribe(response => this.institutions.set(response.items ?? []));
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      this.formMode.set(id !== null);
+      this.editId.set(id && id !== 'new' ? id : null);
+      this.error.set('');
+      this.success.set('');
+      if (id) this.loadForm(id);
+      else this.loadUsers();
+    });
+    this.service.getInstitutions().subscribe({
+      next: result => this.institutions.set(result.items ?? []),
+    });
+  }
+
+  get pages(): number {
+    return Math.ceil(this.count() / this.limit);
+  }
+
+  loadUsers(): void {
+    this.loading.set(true);
+    this.service.getUsers(this.limit, this.page() * this.limit)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: result => {
+          this.users.set(result.users ?? []);
+          this.count.set(result.count ?? 0);
+        },
+        error: () => this.error.set('No se pudo cargar el listado de usuarios.'),
+      });
+  }
+
+  loadForm(id: string): void {
+    this.form.reset({ fullName: '', email: '', password: '', role: 'editor', institucionId: '' });
+    this.editingUser.set(null);
+    if (id === 'new') return;
+
+    this.loading.set(true);
+    this.service.getUser(id)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: user => {
+          this.editingUser.set(user);
+          const role = ['super', 'admin', 'editor', 'user'].find(item => user.roles.includes(item)) ?? 'user';
+          this.form.patchValue({ fullName: user.fullName, email: user.email, role });
+        },
+        error: () => this.error.set('No se pudo cargar el usuario.'),
+      });
   }
 
   onRoleChange(): void {
-    const institution = this.form.controls.institucionId;
-    if (this.form.controls.role.value === 'user') {
-      institution.setValidators(Validators.required);
+    const control = this.form.controls.institucionId;
+    if (this.form.controls.role.value === 'user' && !this.editId()) {
+      control.setValidators(Validators.required);
     } else {
-      institution.clearValidators();
-      institution.setValue('');
+      control.clearValidators();
+      if (this.form.controls.role.value !== 'user') control.setValue('');
     }
-    institution.updateValueAndValidity();
+    control.updateValueAndValidity();
   }
 
-  institutionName(institution: InstitutionOption): string {
-    const translation = institution.traducciones?.find(item => item.idioma === 'es') ?? institution.traducciones?.[0];
-    return translation?.name ?? institution.codigo ?? institution.id;
+  institutionName(item: InstitutionOption): string {
+    const translation = item.traducciones?.find(t => t.idioma === 'es') ?? item.traducciones?.[0];
+    return translation?.nombre ?? translation?.name ?? item.codigo ?? item.id;
   }
 
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const { fullName, email, password, role, institucionId } = this.form.getRawValue();
-    const body = {
-      fullName,
-      email,
-      password,
-      roles: [role],
-      ...(role === 'user' ? { institucionId } : {}),
-    };
     this.saving.set(true);
-    this.message.set('');
-    this.http.post(`${environment.baseUrl}/users`, body)
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: () => {
-          this.message.set('Usuario creado correctamente.');
-          this.isError.set(false);
-          this.form.reset({ fullName: '', email: '', password: '', role: 'editor', institucionId: '' });
-        },
-        error: error => {
-          this.message.set(error?.error?.message ?? 'No se pudo crear el usuario.');
-          this.isError.set(true);
-        },
+    this.error.set('');
+    this.success.set('');
+
+    if (!this.editId()) {
+      this.service.createUser({
+        fullName: fullName.trim(),
+        email: email.trim(),
+        password,
+        roles: [role],
+        ...(role === 'user' ? { institucionId } : {}),
+      }).pipe(finalize(() => this.saving.set(false))).subscribe({
+        next: () => this.router.navigate(['/admin/usuarios']),
+        error: err => this.error.set(err?.error?.message ?? 'No se pudo crear el usuario.'),
       });
+      return;
+    }
+
+    const current = this.editingUser();
+    if (!current) {
+      this.saving.set(false);
+      return;
+    }
+
+    const update = {
+      fullName: fullName.trim(),
+      email: email.trim(),
+      ...(password.trim() ? { password } : {}),
+    };
+    const nextRoles = [role];
+    const roleChange = current.roles.join(',') !== nextRoles.join(',');
+    if (roleChange && role === 'user' && !current.roles.includes('user')) {
+      this.error.set('La asignación de una institución requiere crear el usuario con esa institución.');
+      this.saving.set(false);
+      return;
+    }
+
+    this.service.updateUser(current.id, update).subscribe({
+      next: updated => {
+        if (!roleChange) {
+          this.success.set('Usuario actualizado.');
+          this.editingUser.set(updated);
+          this.saving.set(false);
+          return;
+        }
+        this.service.updateRoles(current.id, nextRoles)
+          .pipe(finalize(() => this.saving.set(false)))
+          .subscribe({
+            next: result => {
+              this.success.set('Usuario y rol actualizados.');
+              this.editingUser.set(result);
+            },
+            error: err => this.error.set(err?.error?.message ?? 'Se actualizaron los datos, pero no se pudo actualizar el rol.'),
+          });
+      },
+      error: err => {
+        this.saving.set(false);
+        this.error.set(err?.error?.message ?? 'No se pudo actualizar el usuario.');
+      },
+    });
+  }
+
+  toggleActive(user: UserEntity): void {
+    const action = user.isActive ? 'desactivar' : 'reactivar';
+    if (!confirm(`¿Deseas ${action} a ${user.fullName}?`)) return;
+    this.service.setActive(user.id, !user.isActive).subscribe({
+      next: () => this.loadUsers(),
+      error: err => this.error.set(err?.error?.message ?? `No se pudo ${action} el usuario.`),
+    });
+  }
+
+  previousPage(): void {
+    if (this.page() === 0) return;
+    this.page.update(value => value - 1);
+    this.loadUsers();
+  }
+
+  nextPage(): void {
+    if (this.page() + 1 >= this.pages) return;
+    this.page.update(value => value + 1);
+    this.loadUsers();
+  }
+
+  roleOptions(): string[] {
+    return this.auth.isSuper() ? ['user', 'editor', 'admin', 'super'] : ['user', 'editor'];
   }
 }
