@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map, of } from 'rxjs';
 import { UsersAdminService } from '../users-admin-page/services/users-admin.service';
 import { UserEntity } from '../users-admin-page/interfaces/user-admin.interface';
@@ -16,7 +16,7 @@ const emptyUser: UserEntity = {
 
 @Component({
   selector: 'app-user-admin-page',
-  imports: [UserDetailsComponent],
+  imports: [RouterLink, UserDetailsComponent],
   templateUrl: './user-admin-page.component.html',
 })
 export class UserAdminPageComponent {
