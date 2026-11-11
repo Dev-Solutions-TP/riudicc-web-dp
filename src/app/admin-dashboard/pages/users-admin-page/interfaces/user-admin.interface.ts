@@ -31,4 +31,3 @@ export interface UpdateUserDto {
   fullName?: string;
   password?: string;
 }
-

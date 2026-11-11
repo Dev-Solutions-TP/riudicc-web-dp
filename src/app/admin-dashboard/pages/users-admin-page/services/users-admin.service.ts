@@ -1,8 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { CreateUserDto, InstitutionOption, UpdateUserDto, UserEntity, UsersResponse } from './user-admin.interface';
+import { environment } from 'src/environments/environment';
+import {
+  CreateUserDto,
+  InstitutionOption,
+  UpdateUserDto,
+  UserEntity,
+  UsersResponse,
+} from '../interfaces/user-admin.interface';
 
 @Injectable({ providedIn: 'root' })
 export class UsersAdminService {

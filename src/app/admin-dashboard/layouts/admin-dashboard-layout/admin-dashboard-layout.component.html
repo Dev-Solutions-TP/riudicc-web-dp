@@ -45,37 +45,11 @@
         id="nav"
         class="w-full px-6"
       >
-        <a
-          routerLink="/admin/dashboard"
-          routerLinkActive="active bg-blue-800"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="group w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-slate-500 transition ease-linear duration-150"
-        >
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 "
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
-              />
-            </svg>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-lg font-bold leading-5 group-[.active]:text-white">Dashboard</span>
-            <span class="text-sm text-slate-500 hidden md:block group-[.active]:text-white/70">Data Overview</span>
-          </div>
-        </a>
+        <p class="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Administración</p>
 
         @if (isAdmin()) {
         <item-bar-menu [link]="'/admin/usuarios'" [title]="'Usuarios'" [subtitle]="'Crear usuarios y editores'">
-          <svg icon class="text-slate-700 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <svg icon class="text-slate-700 group-hover:text-white group-[.active]:text-white transition-colors duration-150" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z"/>
           </svg>
         </item-bar-menu>

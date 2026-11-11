@@ -8,7 +8,8 @@ import { IsOwnerGuard } from '@auth/guards/is-admin-owner.guard';
 import { BannerAdminPageComponent } from './pages/banner-admin-page/banner-admin-page/banner-admin-page.component';
 import { InstitucionAdminPageComponent } from './pages/institucion-admin-page/institucion-admin-page/institucion-admin-page.component';
 import { NoticiaAdminPageComponent } from './pages/noticias/noticia-admin-page/noticia-admin-page.component';
-import { UsuariosAdminPageComponent } from './pages/usuarios-admin-page/usuarios-admin-page.component';
+import { UsersAdminPageComponent } from './pages/users-admin-page/users-admin-page.component';
+import { UserAdminPageComponent } from './pages/user-admin-page/user-admin-page.component';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -17,8 +18,9 @@ export const adminDashboardRoutes: Routes = [
     canMatch: [IsAdminOrOwnerGuard],
     canDeactivate: [IsOwnerGuard],
     children: [
-      { path: 'usuarios', component: UsuariosAdminPageComponent, canMatch: [IsAdminGuard] },
-      { path: 'usuarios/:id', component: UsuariosAdminPageComponent, canMatch: [IsAdminGuard] },
+      { path: 'usuarios', component: UsersAdminPageComponent, canMatch: [IsAdminGuard] },
+      { path: 'usuarios/new', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
+      { path: 'usuarios/:id', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners', component: BannersAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners/:id', component: BannerAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'noticias', component: NoticiasAdminPageComponent, canMatch: [IsAdminOrOwnerGuard] },
