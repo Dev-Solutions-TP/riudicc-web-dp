@@ -27,6 +27,7 @@ export class AuthService {
   isAdmin = computed(() => this._user()?.roles.some(role => role === 'admin' || role === 'super') ?? false);
   isEditor = computed(() => this._user()?.roles.includes('editor') ?? false);
   isOwner = computed(() => this._user()?.roles.includes('owner') ?? false);
+  canCreateContent = computed(() => this.isAdmin());
 
   login(email: string, password: string): Observable<boolean> {
     return this.http.post<AuthResponse>(`${BASE_URL}/auth/login`, { email, password }).pipe(
