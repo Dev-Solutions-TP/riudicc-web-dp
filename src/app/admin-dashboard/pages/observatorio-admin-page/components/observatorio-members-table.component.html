@@ -36,7 +36,7 @@
                 <button
                   class="btn btn-ghost btn-sm text-error"
                   type="button"
-                  aria-label="Finalizar periodo de {{ member.nombre }}"
+                  [attr.aria-label]="'Finalizar periodo de ' + member.nombre"
                   (click)="deactivate.emit(member)"
                 >Finalizar</button>
               }
