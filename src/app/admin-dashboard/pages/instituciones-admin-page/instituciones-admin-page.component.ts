@@ -19,16 +19,16 @@ export class InstitucionesAdminPageComponent {
   authService = inject(AuthService);
   paginationService = inject(PaginationService);
 
-  bannersPerPage = signal(10);
+  institucionesPerPage = signal(10);
 
   instResource = rxResource({
     request: () => ({
       page: this.paginationService.currentPage() - 1,
-      limit: this.bannersPerPage(),
+      limit: this.institucionesPerPage(),
     }),
     loader: ({ request }) => {
       return this.instService.getInstitucionesUsers({
-        offset: request.page * 10,
+        offset: request.page * request.limit,
         limit: request.limit,
       });
     },
