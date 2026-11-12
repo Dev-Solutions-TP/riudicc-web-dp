@@ -7,6 +7,7 @@ import { PaginationService } from '@shared/components/pagination/pagination.serv
 import { UsersAdminService } from './services/users-admin.service';
 import { UserEntity } from './interfaces/user-admin.interface';
 import { UsersTableComponent } from './components/users-table.component';
+import { AuthService } from '@auth/services/auth.service';
 
 @Component({
   selector: 'app-users-admin-page',
@@ -16,6 +17,7 @@ import { UsersTableComponent } from './components/users-table.component';
 export class UsersAdminPageComponent {
   private readonly usersService = inject(UsersAdminService);
   readonly paginationService = inject(PaginationService);
+  readonly authService = inject(AuthService);
 
   readonly usersPerPage = signal(10);
   private readonly refreshKey = signal(0);

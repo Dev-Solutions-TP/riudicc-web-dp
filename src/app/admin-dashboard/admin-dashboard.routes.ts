@@ -19,7 +19,7 @@ export const adminDashboardRoutes: Routes = [
     canDeactivate: [IsOwnerGuard],
     children: [
       { path: 'usuarios', component: UsersAdminPageComponent, canMatch: [IsAdminGuard] },
-      { path: 'usuarios/new', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
+      // { path: 'usuarios/new', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'usuarios/:id', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners', component: BannersAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners/:id', component: BannerAdminPageComponent, canMatch: [IsAdminGuard] },

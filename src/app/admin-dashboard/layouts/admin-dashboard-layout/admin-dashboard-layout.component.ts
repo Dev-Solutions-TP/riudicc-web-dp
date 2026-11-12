@@ -5,7 +5,7 @@ import { ItemBarMenuComponent } from "../../components/item-bar-menu/item-bar-me
 
 @Component({
   selector: 'app-admin-dashboard-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ItemBarMenuComponent],
+  imports: [RouterOutlet, RouterLink, ItemBarMenuComponent],
   templateUrl: './admin-dashboard-layout.component.html',
 })
 export class AdminDashboardLayoutComponent {
