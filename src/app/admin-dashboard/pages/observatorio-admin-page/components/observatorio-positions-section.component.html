@@ -1,0 +1,70 @@
+<section class="space-y-5">
+  <div>
+    <h2 class="text-xl font-bold">Cargos del observatorio</h2>
+    <p class="text-sm text-base-content/70">Define los cargos disponibles en español e inglés.</p>
+  </div>
+
+  <details class="collapse collapse-arrow rounded-box border border-base-300 bg-base-100">
+    <summary class="collapse-title min-h-0 py-4 text-lg font-semibold">Nuevo cargo</summary>
+    <div class="collapse-content">
+      <form class="space-y-5 pt-2" (ngSubmit)="submit()">
+        <div class="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-3">
+          <div class="form-control">
+            <label class="label" for="position-code">
+              <span class="label-text font-semibold">Código interno <span class="text-error">*</span></span>
+            </label>
+            <input id="position-code" class="input input-bordered w-full" name="codigo" [(ngModel)]="form.codigo" required>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="position-name-es">
+              <span class="label-text font-semibold">Nombre en español <span class="text-error">*</span></span>
+            </label>
+            <input id="position-name-es" class="input input-bordered w-full" name="nombreEs" [(ngModel)]="form.nombreEs" required>
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="position-name-en">
+              <span class="label-text font-semibold">Nombre en inglés <span class="text-error">*</span></span>
+            </label>
+            <input id="position-name-en" class="input input-bordered w-full" name="nombreEn" [(ngModel)]="form.nombreEn" required>
+          </div>
+        </div>
+
+        <div class="flex justify-end border-t border-base-200 pt-4">
+          <button class="btn btn-primary" type="submit" [disabled]="saving">
+            @if (saving) { <span class="loading loading-spinner loading-sm"></span> }
+            Guardar cargo
+          </button>
+        </div>
+      </form>
+    </div>
+  </details>
+
+  <div>
+    <h3 class="mb-3 text-lg font-bold">Cargos registrados <span class="font-normal text-base-content/65">({{ positions.length }})</span></h3>
+    <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+      @if (positions.length) {
+        <table class="table table-zebra">
+          <thead><tr><th>Código</th><th>Español</th><th>Inglés</th><th>Estado</th></tr></thead>
+          <tbody>
+            @for (position of positions; track position.id) {
+              <tr>
+                <td class="font-mono text-sm">{{ position.codigo }}</td>
+                <td>{{ cargoName(position, 'es') }}</td>
+                <td>{{ cargoName(position, 'en') }}</td>
+                <td>
+                  <span class="badge" [class.badge-success]="position.isActive" [class.badge-ghost]="!position.isActive">
+                    {{ position.isActive ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="p-8 text-center text-base-content/65">Todavía no hay cargos registrados.</div>
+      }
+    </div>
+  </div>
+</section>

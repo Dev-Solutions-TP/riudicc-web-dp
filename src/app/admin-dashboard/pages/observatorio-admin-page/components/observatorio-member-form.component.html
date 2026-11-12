@@ -1,0 +1,60 @@
+<details class="collapse collapse-arrow rounded-box border border-base-300 bg-base-100">
+  <summary class="collapse-title min-h-0 py-4 text-lg font-semibold">Agregar miembro</summary>
+  <div class="collapse-content">
+    <form class="space-y-5 pt-2" (ngSubmit)="submit()">
+      <div class="grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2">
+        <div class="form-control">
+          <label class="label" for="member-name">
+            <span class="label-text font-semibold">Nombre completo <span class="text-error">*</span></span>
+          </label>
+          <input id="member-name" class="input input-bordered w-full" name="nombre" [(ngModel)]="form.nombre" required autocomplete="name">
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="member-email">
+            <span class="label-text font-semibold">Correo electrónico</span>
+          </label>
+          <input id="member-email" class="input input-bordered w-full" type="email" name="correo" [(ngModel)]="form.correo" autocomplete="email">
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="member-contact">
+            <span class="label-text font-semibold">Enlace de contacto</span>
+          </label>
+          <input id="member-contact" class="input input-bordered w-full" type="url" name="enlaceContacto" [(ngModel)]="form.enlaceContacto" placeholder="https://">
+        </div>
+
+        <div class="form-control">
+          <label class="label" for="member-position">
+            <span class="label-text font-semibold">Cargo <span class="text-error">*</span></span>
+          </label>
+          <select id="member-position" class="select select-bordered w-full" name="cargoId" [(ngModel)]="form.cargoId" required>
+            <option value="" disabled>Selecciona un cargo</option>
+            @for (position of positions; track position.id) {
+              <option [value]="position.id">{{ cargoName(position) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-control md:col-span-2">
+          <label class="label" for="member-institution">
+            <span class="label-text font-semibold">Institución <span class="text-error">*</span></span>
+          </label>
+          <select id="member-institution" class="select select-bordered w-full" name="institucionId" [(ngModel)]="form.institucionId" required>
+            <option value="" disabled>Selecciona una institución</option>
+            @for (institution of institutions; track institution.id) {
+              <option [value]="institution.id">{{ institutionName(institution) }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end border-t border-base-200 pt-4">
+        <button class="btn btn-primary" type="submit" [disabled]="saving || !positions.length || !institutions.length">
+          @if (saving) { <span class="loading loading-spinner loading-sm"></span> }
+          Guardar miembro
+        </button>
+      </div>
+    </form>
+  </div>
+</details>
