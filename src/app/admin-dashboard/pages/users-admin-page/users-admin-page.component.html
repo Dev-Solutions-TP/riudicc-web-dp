@@ -1,0 +1,69 @@
+<div class="flex flex-wrap items-center gap-4">
+  <div>
+    <h1 class="text-2xl font-bold">Usuarios</h1>
+    <h3 class="text-lg">
+      Administra cuentas, roles y estado de acceso.
+    </h3>
+  </div>
+
+  <div class="flex-1"></div>
+
+  @if (authService.canCreateContent()) {
+  <button
+    class="btn btn-primary"
+    routerLink="/admin/usuarios/new"
+  >
+    Nuevo usuario
+  </button>
+  }
+</div>
+
+<div class="divider"></div>
+
+
+
+
+@if (actionError()) {
+<div class="alert alert-error mt-4">{{ actionError() }}</div>
+}
+
+
+
+@if (usersResource.isLoading()) {
+<div class="flex justify-center p-12">
+  <span class="loading loading-spinner loading-lg"></span>
+</div>
+} @else if (usersResource.error()) {
+<div class="alert alert-error">No se pudo cargar el listado de usuarios.</div>
+} @else {
+<div class="flex flex-wrap items-center gap-3 mb-4">
+  <p>Total de usuarios: <strong>{{ usersResource.value()?.count ?? 0 }}</strong></p>
+  <div class="flex-1"></div>
+  <label class="flex items-center gap-2">
+    <span class="text-sm">Filas por página</span>
+    <select
+      class="select select-bordered select-sm w-24"
+      [value]="usersPerPage()"
+      (change)="onPageSizeChange(selectPerPage.value)"
+      #selectPerPage
+    >
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+    </select>
+  </label>
+</div>
+
+<!-- Listado -->
+<div class="overflow-x-auto mb-5">
+  <app-users-table
+    [users]="usersResource.value()?.users ?? []"
+    (toggleActive)="toggleActive($event)"
+  />
+</div>
+
+<app-pagination
+  [pages]="usersResource.value()?.pages ?? 0"
+  [currentPage]="paginationService.currentPage()"
+/>
+}

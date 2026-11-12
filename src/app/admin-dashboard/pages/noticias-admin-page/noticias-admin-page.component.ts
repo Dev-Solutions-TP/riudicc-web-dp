@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { RouterLink } from '@angular/router';
+import { AuthService } from '@auth/services/auth.service';
 import { NoticiasService } from '@home/pages/noticias-page/services/noticia.service';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
@@ -14,6 +15,7 @@ import { ProductTableComponent } from "../noticias/noticia-table/noticia-table.c
 })
 export class NoticiasAdminPageComponent {
   noticiasSevice = inject(NoticiasService);
+  authService = inject(AuthService);
   paginationService = inject(PaginationService);
 
   noticiasPerPage = signal(10);

@@ -1,0 +1,9 @@
+<a class="btn btn-ghost btn-sm mb-4" routerLink="/admin/usuarios">← Volver al listado</a>
+
+@if (userResource.isLoading()) {
+  <div class="flex justify-center p-12">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+} @else if (userResource.hasValue()) {
+  <app-user-details [user]="userResource.value()" />
+}

@@ -3,6 +3,7 @@
     (ngSubmit)="onSubmit()"
     class="space-y-6"
 >
+    @if (!isEditor()) {
     <section>
         <h2 class="text-lg font-bold">Datos Generales</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
@@ -249,7 +250,8 @@
         >+ Agregar Enlace</button>
     </section>
 
-    <section formArrayName="traducciones">
+        }
+<section formArrayName="traducciones">
         <h2 class="text-lg font-bold">Traducciones</h2>
         @for(t of traduccionesFormArray.controls; track t; let i = $index) {
         <div
@@ -261,6 +263,7 @@
                     <span class="label-text font-semibold">Idioma</span>
                 </label>
                 <select
+                    [disabled]="isEditor()"
                     formControlName="idioma"
                     class="select select-bordered w-full"
                 >
@@ -302,18 +305,22 @@
                     class="textarea textarea-bordered w-full"
                 ></textarea>
             </div>
+            @if (!isEditor()) {
             <button
                 class="btn btn-outline btn-error"
                 type="button"
                 (click)="removeTraduccion(i)"
             >Eliminar</button>
+            }
         </div>
         }
+        @if (!isEditor()) {
         <button
             class="btn btn-primary mt-2"
             type="button"
             (click)="addTraduccion()"
         >+ Agregar Traducción</button>
+        }
 
     </section>
     <div class="flex justify-end mt-10">

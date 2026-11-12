@@ -1,40 +1,55 @@
-<h1 class="text-2xl font-bold">Listado de Instituciones</h1>
-<h3 class="text-lg">
-    Total de Instituciones
-    <span class="text-accent">{{ instResource.value()?.count }}</span>
-</h3>
+<div class="flex flex-wrap items-center gap-4">
+  <div>
+    <h1 class="text-2xl font-bold">Instituciones</h1>
+    <h3 class="text-lg">Administra las instituciones registradas.</h3>
+  </div>
+
+  <div class="flex-1"></div>
+
+  @if (authService.canCreateContent()) {
+    <button
+      class="btn btn-primary"
+      routerLink="/admin/universidades/new"
+    >
+      Nueva institución
+    </button>
+  }
+</div>
 
 <div class="divider"></div>
 
-<div class="flex gap-2 items-center h-20">
-    <app-pagination
-        [pages]="instResource.value()?.pages ?? 0"
-        [currentPage]="paginationService.currentPage()"
-    />
-
-    <select
-        class="select select-bordered w-32"
-        (change)="bannersPerPage.set(+selectPerPage.value)"
+@if (instResource.isLoading()) {
+  <div class="flex justify-center p-12">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+} @else if (instResource.error()) {
+  <div class="alert alert-error">No se pudo cargar el listado de instituciones.</div>
+} @else {
+  <div class="mb-4 flex flex-wrap items-center gap-3">
+    <p>Total de instituciones: <strong>{{ instResource.value()?.count ?? 0 }}</strong></p>
+    <div class="flex-1"></div>
+    <label class="flex items-center gap-2">
+      <span class="text-sm">Filas por página</span>
+      <select
+        class="select select-bordered select-sm w-24"
+        [value]="institucionesPerPage()"
+        (change)="institucionesPerPage.set(+selectPerPage.value)"
         #selectPerPage
-    >
+      >
         <option value="10">10</option>
         <option value="20">20</option>
         <option value="50">50</option>
         <option value="100">100</option>
-    </select>
+      </select>
+    </label>
+  </div>
 
-    <div class="flex flex-1"></div>
-
-    <button
-        class="btn btn-primary"
-        routerLink="/admin/universidades/new"
-    >
-        Nueva institución
-    </button>
-</div>
-
-<!-- Listado -->
-<div class="overflow-x-auto mb-10">
+  <div class="mb-5">
     <instituciones-table [insituciones]="instResource.value()?.items ?? []" />
+  </div>
 
-</div>
+  <app-pagination
+    [pages]="instResource.value()?.pages ?? 0"
+    [currentPage]="paginationService.currentPage()"
+  />
+}

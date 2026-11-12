@@ -1,0 +1,70 @@
+<section class="max-w-3xl">
+  <header class="mb-6">
+    <h1 class="text-2xl font-bold">{{ isNew() ? 'Crear usuario' : 'Editar usuario' }}</h1>
+    @if (!isNew()) {
+      <p class="mt-1 text-base-content/70">{{ user().email }}</p>
+    }
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error mb-5">{{ error() }}</div>
+  }
+
+  <form class="space-y-5" [formGroup]="form" (ngSubmit)="submit()">
+    <label class="form-control">
+      <span class="label-text mb-1">Nombre completo</span>
+      <input class="input input-bordered w-full" formControlName="fullName" autocomplete="name">
+      @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+        <span class="label-text-alt text-error mt-1">Ingresa un nombre de al menos 3 caracteres.</span>
+      }
+    </label>
+
+    <label class="form-control">
+      <span class="label-text mb-1">Correo</span>
+      <input class="input input-bordered w-full" type="email" formControlName="email" autocomplete="email">
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <span class="label-text-alt text-error mt-1">Ingresa un correo válido.</span>
+      }
+    </label>
+
+    <label class="form-control">
+      <span class="label-text mb-1">Contraseña {{ isNew() ? '' : '(déjala vacía para conservarla)' }}</span>
+      <input class="input input-bordered w-full" type="password" formControlName="password" [autocomplete]="isNew() ? 'new-password' : 'new-password'">
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <span class="label-text-alt text-error mt-1">La contraseña debe tener al menos 6 caracteres.</span>
+      }
+    </label>
+
+    <label class="form-control">
+      <span class="label-text mb-1">Rol</span>
+      <select class="select select-bordered w-full" formControlName="role" (change)="onRoleChange()">
+        @for (role of roleOptions(); track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+    </label>
+
+    @if (isNew() && form.controls.role.value === 'user') {
+      <label class="form-control">
+        <span class="label-text mb-1">Institución</span>
+        <select class="select select-bordered w-full" formControlName="institucionId">
+          <option value="">Selecciona una institución</option>
+          @for (institution of institutions(); track institution.id) {
+            <option [value]="institution.id">{{ institutionName(institution) }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    @if (!isNew()) {
+      <p class="text-sm text-base-content/70">Estado: {{ user().isActive ? 'Activo' : 'Inactivo' }}</p>
+    }
+
+    <div class="flex flex-wrap gap-3 pt-2">
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar' }}
+      </button>
+      <button class="btn btn-ghost" type="button" (click)="cancel()">Cancelar</button>
+    </div>
+  </form>
+</section>

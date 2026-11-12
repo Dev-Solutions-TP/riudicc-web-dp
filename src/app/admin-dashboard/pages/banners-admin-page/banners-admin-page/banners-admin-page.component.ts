@@ -28,7 +28,7 @@ export class BannersAdminPageComponent {
     }),
     loader: ({ request }) => {
       return this.bannersSevice.getBannersAdmin({
-        offset: request.page * 9,
+        offset: request.page * request.limit,
         limit: request.limit,
       });
     },

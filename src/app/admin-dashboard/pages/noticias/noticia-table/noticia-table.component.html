@@ -1,5 +1,5 @@
-<div class="overflow-x-auto mb-10 pb-10">
-  <table class="table">
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
     <!-- head -->
     <thead class="">
       <tr>
@@ -47,8 +47,6 @@
                 [routerLink]="['/admin/noticias', noticia.id]"
                 class="font-bold hover:text-accent transition-colors duration-300"
               > {{ getTraduccionFrom(noticia).title }}</a>
-
-
             </div>
           </div>
         </td>
@@ -59,16 +57,22 @@
           {{ noticia.slug }}
         </td>
         <td>
-          {{ noticia.state | titlecase }}
+          <span
+            class="badge"
+            [class.badge-success]="isActive(noticia)"
+            [class.badge-error]="!isActive(noticia)"
+          >{{ isActive(noticia) ? 'Activo' : 'Inactivo' }}</span>
         </td>
-        <th>
-          <a
-            [routerLink]="['/admin/noticias', noticia.id]"
-            class="btn btn-ghost text-accent btn-xs"
-          >
-            Editar
-          </a>
-        </th>
+        <td>
+          <div class="flex flex-wrap justify-end gap-2">
+            <a
+              class="btn btn-sm btn-outline"
+              [routerLink]="['/admin/noticias', noticia.id]"
+            >
+              Editar
+            </a>
+          </div>
+        </td>
       </tr>
       }
     </tbody>

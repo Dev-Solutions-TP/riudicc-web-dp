@@ -1,76 +1,59 @@
-<div class="overflow-x-auto mb-10 pb-10">
-    <table class="table">
-        <!-- head -->
-        <thead class="">
-            <tr>
-                <!-- <th>
-          <label>
-            <input
-              type="checkbox"
-              class="checkbox"
-            />
-          </label>
-        </th> -->
-                <th>Tittle</th>
-                <th>Date</th>
-                <th>Slug SEO</th>
-                <th>State</th>
-                <th></th>
-
-            </tr>
-        </thead>
-        <tbody>
-            <!-- row 1 -->
-            @for (institucion of insituciones(); track institucion.id) {
-
-            <tr>
-                <!-- <th>
-          <label>
-            <input
-              type="checkbox"
-              class="checkbox"
-            />
-          </label>
-        </th> -->
-                <td>
-                    <div class="flex items-center gap-3">
-                        <div class="avatar">
-                            <div class="mask mask-squircle h-12 w-12">
-                                <img
-                                    [src]="institucion.images | imageNamePipe: 'uni'"
-                                    [alt]="institucion.images[0]"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <a
-                                [routerLink]="['/admin/universidades', institucion.id]"
-                                class="font-bold hover:text-accent transition-colors duration-300"
-                            > {{ getTraduccionFrom(institucion).name }}</a>
-
-
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    {{ institucion.createdAt | date: 'longDate' }}
-                </td>
-                <td>
-                    {{ institucion.slug }}
-                </td>
-                <td>
-                    {{ institucion.state ==='active' ? 'Activo' : 'Inactivo' }}
-                </td>
-                <th>
-                    <a
-                        [routerLink]="['/admin/universidades', institucion.id]"
-                        class="btn btn-ghost text-accent btn-xs"
-                    >
-                        Details
-                    </a>
-                </th>
-            </tr>
-            }
-        </tbody>
-    </table>
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Fecha</th>
+        <th>Slug SEO</th>
+        <th>Estado</th>
+        <th><span class="sr-only">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (institucion of insituciones(); track institucion.id) {
+        <tr>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle h-12 w-12">
+                  <img
+                    [src]="institucion.images | imageNamePipe: 'uni'"
+                    [alt]="institucion.images[0]"
+                    class="h-12 w-12 object-cover"
+                  />
+                </div>
+              </div>
+              <a
+                [routerLink]="['/admin/universidades', institucion.id]"
+                class="font-bold transition-colors duration-300 hover:text-accent"
+              >{{ getTraduccionFrom(institucion).name }}</a>
+            </div>
+          </td>
+          <td>{{ institucion.createdAt | date: 'longDate' }}</td>
+          <td>{{ institucion.slug }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.badge-success]="institucion.state === 'active'"
+              [class.badge-error]="institucion.state !== 'active'"
+            >{{ institucion.state === 'active' ? 'Activo' : 'Inactivo' }}</span>
+          </td>
+          <td>
+            <div class="flex flex-wrap justify-end gap-2">
+              <a
+                class="btn btn-sm btn-outline"
+                [routerLink]="['/admin/universidades', institucion.id]"
+              >
+                Editar
+              </a>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" class="py-10 text-center text-base-content/70">No hay instituciones para mostrar.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

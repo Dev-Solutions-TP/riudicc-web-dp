@@ -1,76 +1,58 @@
-<div class="overflow-x-auto mb-10 pb-10">
-  <table class="table">
-    <!-- head -->
-    <thead class=" ">
+<div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <thead>
       <tr>
-        <!-- <th>
-          <label>
-            <input
-              type="checkbox"
-              class="checkbox"
-            />
-          </label>
-        </th> -->
-        <th>Tittle</th>
-        <th>Date</th>
+        <th>Título</th>
+        <th>Fecha</th>
         <th>Slug SEO</th>
-        <th>State</th>
-        <th></th>
-
+        <th>Estado</th>
+        <th><span class="sr-only">Acciones</span></th>
       </tr>
     </thead>
     <tbody>
-      <!-- row 1 -->
       @for (banner of banners(); track banner.id) {
-
-      <tr>
-        <!-- <th>
-          <label>
-            <input
-              type="checkbox"
-              class="checkbox"
-            />
-          </label>
-        </th> -->
-        <td>
-          <div class="flex items-center gap-3">
-            <div class="avatar">
-              <div class="mask mask-squircle h-12 w-12">
-                <img
-                  [src]="banner.image | imageNamePipe: 'ban'"
-                  [alt]="banner.traducciones[0].altText"
-                  class="h-12 w-12 object-cover"
-                />
+        <tr>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle h-12 w-12">
+                  <img
+                    [src]="banner.image | imageNamePipe: 'ban'"
+                    [alt]="banner.traducciones[0].altText"
+                    class="h-12 w-12 object-cover"
+                  />
+                </div>
               </div>
-            </div>
-            <div>
               <a
                 [routerLink]="['/admin/banners', banner.id]"
-                class="font-bold hover:text-accent transition-colors duration-300"
-              > {{ banner.traducciones[0].altText }}</a>
-
-
+                class="font-bold transition-colors duration-300 hover:text-accent"
+              >{{ banner.traducciones[0].altText }}</a>
             </div>
-          </div>
-        </td>
-        <td>
-          {{ banner.createdAt | date: 'longDate' }}
-        </td>
-        <td>
-          {{ banner.slug }}
-        </td>
-        <td>
-          {{ banner.state ==='active' ? 'Activo' : 'Inactivo' }}
-        </td>
-        <th>
-          <a
-            [routerLink]="['/admin/banners', banner.id]"
-            class="btn btn-ghost text-accent btn-xs"
-          >
-            Edit
-          </a>
-        </th>
-      </tr>
+          </td>
+          <td>{{ banner.createdAt | date: 'longDate' }}</td>
+          <td>{{ banner.slug }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.badge-success]="banner.state === 'active'"
+              [class.badge-error]="banner.state !== 'active'"
+            >{{ banner.state === 'active' ? 'Activo' : 'Inactivo' }}</span>
+          </td>
+          <td>
+            <div class="flex flex-wrap justify-end gap-2">
+              <a
+                class="btn btn-sm btn-outline"
+                [routerLink]="['/admin/banners', banner.id]"
+              >
+                Editar
+              </a>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" class="py-10 text-center text-base-content/70">No hay banners para mostrar.</td>
+        </tr>
       }
     </tbody>
   </table>
