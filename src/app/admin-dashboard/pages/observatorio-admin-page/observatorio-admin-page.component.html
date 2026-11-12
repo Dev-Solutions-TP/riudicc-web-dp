@@ -1,0 +1,53 @@
+<main class="mx-auto max-w-6xl space-y-8">
+  <header class="border-b border-base-300 pb-5">
+    <h1 class="text-2xl font-bold">Observatorio</h1>
+    <p class="text-base-content/70">Administra cargos y periodos de representación.</p>
+  </header>
+  @if (error()) { <div class="alert alert-error" role="alert">{{ error() }}</div> }
+  @if (success()) { <div class="alert alert-success" role="status">{{ success() }}</div> }
+
+  <section class="grid gap-6 lg:grid-cols-2">
+    <form class="card bg-base-100 shadow-sm" (ngSubmit)="savePosition()">
+      <div class="card-body">
+        <h2 class="card-title">Nuevo cargo</h2>
+        <label class="form-control"><span class="label-text">Código interno</span><input class="input input-bordered" name="codigo" [(ngModel)]="positionForm.codigo" required></label>
+        <label class="form-control"><span class="label-text">Nombre en español</span><input class="input input-bordered" name="nombreEs" [(ngModel)]="positionForm.nombreEs" required></label>
+        <label class="form-control"><span class="label-text">Nombre en inglés</span><input class="input input-bordered" name="nombreEn" [(ngModel)]="positionForm.nombreEn" required></label>
+        <div class="card-actions justify-end"><button class="btn btn-primary" type="submit">Guardar cargo</button></div>
+      </div>
+    </form>
+
+    <form class="card bg-base-100 shadow-sm" (ngSubmit)="saveMember()">
+      <div class="card-body">
+        <h2 class="card-title">Nuevo miembro</h2>
+        <label class="form-control"><span class="label-text">Nombre completo</span><input class="input input-bordered" name="nombre" [(ngModel)]="memberForm.nombre" required></label>
+        <label class="form-control"><span class="label-text">Correo opcional</span><input class="input input-bordered" type="email" name="correo" [(ngModel)]="memberForm.correo"></label>
+        <label class="form-control"><span class="label-text">Enlace de contacto opcional</span><input class="input input-bordered" type="url" name="enlace" [(ngModel)]="memberForm.enlaceContacto"></label>
+        <label class="form-control"><span class="label-text">Cargo</span><select class="select select-bordered" name="cargoId" [(ngModel)]="memberForm.cargoId" required><option value="" disabled>Selecciona un cargo</option>@for (position of positions(); track position.id) { <option [value]="position.id">{{ cargoName(position) }}</option> }</select></label>
+        <label class="form-control"><span class="label-text">Institución</span><select class="select select-bordered" name="institucionId" [(ngModel)]="memberForm.institucionId" required><option value="" disabled>Selecciona una institución</option>@for (institution of institutions(); track institution.id) { <option [value]="institution.id">{{ institutionName(institution) }}</option> }</select></label>
+        <div class="card-actions justify-end"><button class="btn btn-primary" type="submit" [disabled]="!positions().length">Guardar miembro</button></div>
+      </div>
+    </form>
+  </section>
+
+  <section class="card bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">Miembros e historial</h2>
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead><tr><th>Nombre</th><th>Cargo</th><th>Institución</th><th>Periodo</th><th>Estado</th><th></th></tr></thead>
+          <tbody>@for (member of members(); track member.id) {
+            <tr>
+              <td>{{ member.nombre }}<div class="text-xs opacity-60">{{ member.correo }}</div></td>
+              <td>{{ cargoName(member.cargo) }}</td>
+              <td>{{ institutionName(member.institucion) }}</td>
+              <td>{{ member.fechaInicio | date:'mediumDate' }} – {{ member.fechaFin ? (member.fechaFin | date:'mediumDate') : 'Actual' }}</td>
+              <td><span class="badge" [class.badge-success]="member.isActive">{{ member.isActive ? 'Activo' : 'Inactivo' }}</span></td>
+              <td>@if (member.isActive) { <button class="btn btn-ghost btn-sm text-error" type="button" (click)="deactivate(member)">Finalizar cargo</button> }</td>
+            </tr>
+          }</tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>

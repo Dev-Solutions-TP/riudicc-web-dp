@@ -1,41 +1,48 @@
-<page-title
-    firstWord="Observatory"
-    secondWord=""
-></page-title>
+<page-title [firstWord]="title()" [secondWord]="''"></page-title>
 
-<!-- <div class=" max-w-[100rem]   px-4  md:px-20   grid grid-cols-1  lg:grid-cols-2 mt-7 gap-5">
+<main class="mx-auto max-w-[100rem] px-4 md:px-20 pb-16">
+  <header class="mb-8 border-b border-base-300 pb-5">
+    <h2 class="font-title text-2xl md:text-4xl font-light">{{ title() }}</h2>
+    <p class="mt-2 text-base md:text-lg text-base-content/70">{{ subtitle() }}</p>
+  </header>
 
-    @if (sociedadResponse.isLoading()) {
-    <div class="flex justify-center items-center h-screen">
-
-        <span class="loading loading-spinner loading-lg"></span>
+  @if (members.isLoading()) {
+    <div class="flex min-h-60 items-center justify-center" role="status" aria-live="polite">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+      <span class="sr-only">Cargando miembros</span>
     </div>
+  } @else if (members.error()) {
+    <div class="alert alert-error" role="alert">No se pudo cargar el equipo del observatorio.</div>
+  } @else if (members.hasValue()) {
+    @if (members.value().items.length) {
+      <section class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4" aria-label="Miembros del observatorio">
+        @for (member of members.value().items; track member.id) {
+          <article class="card border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl">
+            <figure class="flex h-36 items-center justify-center bg-white p-5">
+              @if (institutionImage(member)) {
+                <img [src]="institutionImage(member)" [alt]="institutionName(member)" class="max-h-full max-w-full object-contain" loading="lazy">
+              } @else {
+                <span class="text-sm text-base-content/50">{{ institutionName(member) }}</span>
+              }
+            </figure>
+            <div class="card-body gap-2 p-5">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ cargoName(member.cargo) }}</p>
+              <h3 class="card-title text-lg">{{ member.nombre }}</h3>
+              <p class="text-sm text-base-content/70">{{ institutionName(member) }}{{ member.institucion.pais ? ' · ' + member.institucion.pais : '' }}</p>
+              <div class="card-actions mt-3 flex-wrap">
+                @if (member.correo) {
+                  <a class="btn btn-primary btn-sm" [href]="mailto(member)">Contactar por correo</a>
+                }
+                @if (member.enlaceContacto) {
+                  <a class="btn btn-outline btn-sm" [href]="member.enlaceContacto" target="_blank" rel="noopener noreferrer">Perfil / contacto</a>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <p class="rounded-box bg-base-200 p-6 text-center text-base-content/70">Aún no hay miembros activos.</p>
     }
-    @if (sociedadResponse.hasValue()) {
-    @for (proyecto of sociedadResponse.value().items; track $index) {
-
-    <project-card [proyecto]="proyecto"></project-card>
-    }
-    @empty {
-    <p>No data loaded yet.</p>
-    }}
-
-</div> -->
-
-<div class=" max-w-[100rem]   px-4  md:px-20   grid grid-cols-1 ">
-
-    <div class="flex flex-col items-center justify-center min-h-[45vh] text-center gap-5">
-        <h2 class="text-2xl md:text-3xl font-['Roboto'] font-bold text-center mb-4">
-            {{titulo()}}
-        </h2>
-        <p class="text-lg md:text-xl font-['Roboto'] text-center max-w-2xl">
-            {{descripcion()}}
-        </p>
-        <a
-            routerLink="/"
-            class="btn btn-primary btn-wide"
-        >
-            {{ goHomeText() }}
-        </a>
-    </div>
-</div>
+  }
+</main>
