@@ -82,6 +82,46 @@ export const AppText = {
     },
 
     observatorio: {
+        title: {
+            es: 'Quién coordina el observatorio',
+            en: 'Observatory coordination',
+            fr: 'Coordination de l’Observatoire',
+        },
+        subtitle: {
+            es: 'Un equipo con representación de cada región de la red.',
+            en: 'A team representing every region of the network.',
+            fr: 'Une équipe représentant chaque région du réseau.',
+        },
+        empty: {
+            es: 'Aún no hay miembros activos.',
+            en: 'There are no active members yet.',
+            fr: 'Il n’y a pas encore de membres actifs.',
+        },
+        loadError: {
+            es: 'No se pudo cargar el equipo del observatorio.',
+            en: 'The observatory team could not be loaded.',
+            fr: 'Impossible de charger l’équipe de l’Observatoire.',
+        },
+        contactEmail: {
+            es: 'Contactar por correo',
+            en: 'Contact by email',
+            fr: 'Contacter par e-mail',
+        },
+        contactLink: {
+            es: 'Perfil / contacto',
+            en: 'Profile / contact',
+            fr: 'Profil / contact',
+        },
+        emailSubject: {
+            es: 'Contacto desde RIUDICC',
+            en: 'Contact from RIUDICC',
+            fr: 'Contact depuis RIUDICC',
+        },
+        emailBody: {
+            es: 'He visto su posición en RIUDICC y necesito poder contactar.\n\n',
+            en: 'I saw your position on RIUDICC and would like to get in touch.\n\n',
+            fr: 'J’ai vu votre fonction sur RIUDICC et souhaiterais vous contacter.\n\n',
+        },
         titleAux: {
             es: '¡Estamos trabajando en mas proyectos!',
             en: 'We are working on more projects!',

@@ -1,0 +1,35 @@
+<article class="card border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl">
+  <figure class="flex h-36 items-center justify-center overflow-hidden bg-white p-5">
+    <img
+      [src]="member().institucion.images | imageNamePipe: 'uni'"
+      [alt]="member().institucion.images?.[0]?.altText || institutionName()"
+      class="max-h-full max-w-full object-contain"
+      loading="lazy"
+    >
+  </figure>
+
+  <div class="card-body gap-2 p-5">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ cargoName() }}</p>
+    <h2 class="card-title text-lg">{{ member().nombre }}</h2>
+    <p class="text-sm text-base-content/70">
+      {{ institutionName() }}
+      @if (member().institucion.pais) { · {{ member().institucion.pais }} }
+    </p>
+
+    @if (member().correo || member().enlaceContacto) {
+      <div class="card-actions mt-3 flex-wrap">
+        @if (member().correo) {
+          <a class="btn btn-primary btn-sm" [href]="mailto()">{{ contactEmailText() }}</a>
+        }
+        @if (member().enlaceContacto) {
+          <a
+            class="btn btn-outline btn-sm"
+            [href]="member().enlaceContacto!"
+            target="_blank"
+            rel="noopener noreferrer"
+          >{{ contactLinkText() }}</a>
+        }
+      </div>
+    }
+  </div>
+</article>

@@ -1,8 +1,10 @@
+import { ImageEntity } from '@home/interfaces/image.interface';
+
 export interface ObservatorioCargoTranslation { id?: string; idioma: 'es' | 'en'; nombre: string; }
 export interface ObservatorioCargo { id: string; codigo: string; isActive: boolean; traducciones: ObservatorioCargoTranslation[]; }
 export interface ObservatorioInstitucion {
   id: string; slug?: string; pais?: string;
-  images?: Array<{ url?: string; image?: string; altText?: string }>;
+  images?: ImageEntity[];
   traducciones?: Array<{ idioma: string; name?: string; nombre?: string }>;
 }
 export interface ObservatorioMember {

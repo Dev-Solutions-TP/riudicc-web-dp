@@ -4,6 +4,7 @@ import { finalize, forkJoin, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ObservatorioCargo, ObservatorioMember } from '@home/pages/observatorio/observatorio.interface';
 import { ObservatorioService } from '@home/pages/observatorio/observatorio.service';
+import { InstitutionOption } from './components/observatorio-member-form.component';
 import {
   NewMemberPayload,
   ObservatorioMemberFormComponent,
@@ -13,11 +14,6 @@ import {
   NewPositionPayload,
   ObservatorioPositionsSectionComponent,
 } from './components/observatorio-positions-section.component';
-
-interface Institution {
-  id: string;
-  traducciones?: Array<{ idioma: string; name?: string; nombre?: string }>;
-}
 
 @Component({
   selector: 'app-observatorio-admin-page',
@@ -36,7 +32,7 @@ export class ObservatorioAdminPageComponent {
 
   readonly members = signal<ObservatorioMember[]>([]);
   readonly positions = signal<ObservatorioCargo[]>([]);
-  readonly institutions = signal<Institution[]>([]);
+  readonly institutions = signal<InstitutionOption[]>([]);
   readonly activeTab = signal<'members' | 'positions'>('members');
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -54,7 +50,7 @@ export class ObservatorioAdminPageComponent {
     forkJoin([
       this.service.getMembers(),
       this.service.getPositions(),
-      this.http.get<{ items: Institution[] }>(this.api + '/instituciones', {
+      this.http.get<{ items: InstitutionOption[] }>(this.api + '/instituciones', {
         params: new HttpParams().set('limit', 100).set('offset', 0),
       }),
     ])

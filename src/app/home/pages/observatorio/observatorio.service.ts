@@ -15,6 +15,9 @@ export class ObservatorioService {
   getMembers(): Observable<ObservatorioList<ObservatorioMember>> {
     return this.http.get<ObservatorioList<ObservatorioMember>>(`${this.api}/miembros`);
   }
+  getMember(id: string): Observable<ObservatorioMember> {
+    return this.http.get<ObservatorioMember>(`${this.api}/miembros/${id}`);
+  }
   getPositions(): Observable<ObservatorioCargo[]> {
     return this.http.get<ObservatorioCargo[]>(`${this.api}/cargos`);
   }
@@ -23,7 +26,7 @@ export class ObservatorioService {
       ? this.http.patch<ObservatorioCargo>(`${this.api}/cargos/${payload.id}`, payload)
       : this.http.post<ObservatorioCargo>(`${this.api}/cargos`, payload);
   }
-  saveMember(payload: Record<string, unknown>, id?: string): Observable<ObservatorioMember> {
+  saveMember(payload: object, id?: string): Observable<ObservatorioMember> {
     return id
       ? this.http.patch<ObservatorioMember>(`${this.api}/miembros/${id}`, payload)
       : this.http.post<ObservatorioMember>(`${this.api}/miembros`, payload);

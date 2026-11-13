@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ObservatorioMember } from '@home/pages/observatorio/observatorio.interface';
 
 @Component({
   selector: 'app-observatorio-members-table',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './observatorio-members-table.component.html',
 })
 export class ObservatorioMembersTableComponent {
