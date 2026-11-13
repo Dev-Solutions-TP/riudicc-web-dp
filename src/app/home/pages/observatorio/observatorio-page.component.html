@@ -22,7 +22,7 @@
   } @else if (members.hasValue()) {
   @if (members.value().items.length) {
   <section
-    class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4"
+    class="grid grid-cols-1 gap-5 md:grid-cols-2"
     [attr.aria-label]="title()"
   >
     @for (member of members.value().items; track member.id) {
