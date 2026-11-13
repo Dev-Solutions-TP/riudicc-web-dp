@@ -1,12 +1,21 @@
-<article class="card h-full border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl">
-  <figure class="flex h-48 items-center justify-center overflow-hidden bg-white p-3 sm:h-52">
-    <img
-      [src]="member().institucion.images | imageNamePipe: 'uni'"
-      [alt]="member().institucion.images?.[0]?.altText || institutionName()"
-      class="h-full w-full object-contain"
-      loading="lazy"
-    >
+<article
+  class="card h-full border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl"
+>
+
+  <!-- <figure class="flex h-48 items-center justify-center overflow-hidden bg-white p-3 sm:h-52">
+  <div class="flex h-full w-full items-center justify-center overflow-hidden"> -->
+  <figure class="flex h-28 items-center justify-center overflow-hidden bg-white sm:h-32">
+    <div class="flex h-full w-full items-center justify-center overflow-hidden">
+      <img
+        [src]="member().institucion.images | imageNamePipe: 'uni'"
+        [alt]="member().institucion.images?.[0]?.altText || institutionName()"
+        class="h-[240%] w-[240%] max-w-none object-contain"
+        loading="lazy"
+      >
+    </div>
   </figure>
+
+
 
   <div class="card-body flex-1 gap-2 p-5">
     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ cargoName() }}</p>
