@@ -1,0 +1,114 @@
+<form
+  class="space-y-6"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
+  <section class="rounded-box border border-base-300 bg-base-100 p-5">
+    <h2 class="text-lg font-bold">{{ text.details() }}</h2>
+    <div class="mt-3 grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2">
+      <div class="form-control">
+        <label
+          class="label"
+          for="edit-member-name"
+        >
+          <span class="label-text font-semibold">{{ text.fullName() }} <span class="text-error">*</span></span>
+        </label>
+        <input
+          id="edit-member-name"
+          class="input input-bordered w-full"
+          formControlName="nombre"
+          autocomplete="name"
+        >
+        <form-error-label [control]="form.controls.nombre" />
+      </div>
+
+      <div class="form-control">
+        <label
+          class="label"
+          for="edit-member-email"
+        ><span class="label-text font-semibold">{{ text.email() }}</span></label>
+        <input
+          id="edit-member-email"
+          class="input input-bordered w-full"
+          type="email"
+          formControlName="correo"
+          autocomplete="email"
+        >
+        <form-error-label [control]="form.controls.correo" />
+      </div>
+
+      <div class="form-control">
+        <label
+          class="label"
+          for="edit-member-contact"
+        ><span class="label-text font-semibold">{{ text.contact() }}</span></label>
+        <input
+          id="edit-member-contact"
+          class="input input-bordered w-full"
+          type="url"
+          formControlName="enlaceContacto"
+          [placeholder]="text.contactPlaceholder()"
+        >
+        <form-error-label [control]="form.controls.enlaceContacto" />
+      </div>
+
+      <div class="form-control">
+        <label
+          class="label"
+          for="edit-member-position"
+        >
+          <span class="label-text font-semibold">{{ text.position() }} <span class="text-error">*</span></span>
+        </label>
+        <select
+          id="edit-member-position"
+          class="select select-bordered w-full"
+          formControlName="cargoId"
+        >
+          @for (position of positions; track position.id) {
+          <option [value]="position.id">{{ cargoName(position) }}</option>
+          }
+        </select>
+        <form-error-label [control]="form.controls.cargoId" />
+      </div>
+
+      <div class="form-control md:col-span-2">
+        <label
+          class="label"
+          for="edit-member-institution"
+        >
+          <span class="label-text font-semibold">{{ text.institution() }} <span class="text-error">*</span></span>
+        </label>
+        <select
+          id="edit-member-institution"
+          class="select select-bordered w-full"
+          formControlName="institucionId"
+        >
+          @for (institution of institutions; track institution.id) {
+          <option [value]="institution.id">{{ institutionName(institution) }}</option>
+          }
+        </select>
+        <form-error-label [control]="form.controls.institucionId" />
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-box border border-base-300 bg-base-100 p-5">
+    <h2 class="text-lg font-bold">{{ text.period() }}</h2>
+    <p class="mt-2 text-sm text-base-content/70">
+      {{ text.status() }}: <span class="font-semibold">{{ member.isActive ? text.active() : text.inactive() }}</span>
+      · {{ text.start() }}: {{ member.fechaInicio | date:'mediumDate' }}
+      @if (member.fechaFin) { · {{ text.end() }}: {{ member.fechaFin | date:'mediumDate' }} }
+    </p>
+  </section>
+
+  <div class="flex flex-wrap justify-end gap-3">
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="saving || form.invalid"
+    >
+      @if (saving) { <span class="loading loading-spinner loading-sm"></span> }
+      {{ text.save() }}
+    </button>
+  </div>
+</form>

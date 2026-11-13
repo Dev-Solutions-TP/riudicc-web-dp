@@ -10,6 +10,8 @@ import { InstitucionAdminPageComponent } from './pages/institucion-admin-page/in
 import { NoticiaAdminPageComponent } from './pages/noticias/noticia-admin-page/noticia-admin-page.component';
 import { UsersAdminPageComponent } from './pages/users-admin-page/users-admin-page.component';
 import { UserAdminPageComponent } from './pages/user-admin-page/user-admin-page.component';
+import { ObservatorioAdminPageComponent } from './pages/observatorio-admin-page/observatorio-admin-page.component';
+import { ObservatorioMemberAdminPageComponent } from './pages/observatorio-admin-page/observatorio-member-admin-page.component';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -19,10 +21,11 @@ export const adminDashboardRoutes: Routes = [
     canDeactivate: [IsOwnerGuard],
     children: [
       { path: 'usuarios', component: UsersAdminPageComponent, canMatch: [IsAdminGuard] },
-      // { path: 'usuarios/new', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'usuarios/:id', component: UserAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners', component: BannersAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'banners/:id', component: BannerAdminPageComponent, canMatch: [IsAdminGuard] },
+      { path: 'observatorio/:id', component: ObservatorioMemberAdminPageComponent, canMatch: [IsAdminGuard] },
+      { path: 'observatorio', component: ObservatorioAdminPageComponent, canMatch: [IsAdminGuard] },
       { path: 'noticias', component: NoticiasAdminPageComponent, canMatch: [IsAdminOrOwnerGuard] },
       { path: 'noticias/:id', component: NoticiaAdminPageComponent, canMatch: [IsAdminOrOwnerGuard] },
       { path: 'universidades', component: InstitucionesAdminPageComponent, canMatch: [IsAdminOrOwnerGuard] },

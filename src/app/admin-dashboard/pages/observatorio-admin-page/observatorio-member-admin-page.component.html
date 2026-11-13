@@ -1,0 +1,47 @@
+<a
+  class="btn btn-ghost mb-4"
+  routerLink="/admin/observatorio"
+>{{ text.back() }}</a>
+
+<h1 class="text-2xl font-bold">{{ text.editTitle() }}</h1>
+
+@if (editResource.isLoading()) {
+<div
+  class="flex justify-center p-12"
+  role="status"
+  aria-live="polite"
+>
+  <span class="loading loading-spinner loading-lg"></span>
+  <span class="sr-only">{{ text.loading() }}</span>
+</div>
+} @else if (editResource.error()) {
+<alert-message
+  [message]="text.loadError()"
+  type="error"
+  [show]="true"
+  [autoHide]="false"
+  [dismissible]="false"
+/>
+} @else if (editResource.hasValue()) {
+<div class="mb-5 mt-2">
+  <h2 class="text-lg">{{ text.member() }}: {{ editResource.value().member.nombre }}</h2>
+</div>
+
+@if (actionError()) {
+<alert-message
+  [message]="actionError()"
+  type="error"
+  [show]="true"
+  [autoHide]="false"
+  [dismissible]="false"
+/>
+}
+
+<app-observatorio-member-details
+  [member]="editResource.value().member"
+  [positions]="editResource.value().positions"
+  [institutions]="editResource.value().institutionResponse.items"
+  [saving]="saving()"
+  (save)="save($event)"
+/>
+}

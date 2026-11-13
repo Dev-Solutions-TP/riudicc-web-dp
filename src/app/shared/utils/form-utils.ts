@@ -17,6 +17,7 @@ export class FormUtils {
   // Expresiones regulares
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
   static emailPattern = '^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$';
+  static urlPattern = '^https?:\\/\\/[^\\s]+$';
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
   static slugPattern = '^[a-z0-9_]+(?:-[a-z0-9_]+)*$';
 
@@ -37,6 +38,9 @@ export class FormUtils {
         case 'minlength':
           return `Mínimo de ${errors['minlength'].requiredLength} caracteres.`;
 
+        case 'maxlength':
+          return `Máximo de ${errors['maxlength'].requiredLength} caracteres.`;
+
         case 'min':
           return `Valor mínimo de ${errors['min'].min}`;
 
@@ -55,6 +59,9 @@ export class FormUtils {
           }
           if (errors['pattern'].requiredPattern === FormUtils.slugPattern) {
             return 'El slug debe contener solo letras minúsculas, números, guiones (-) o guiones bajos (_), sin espacios ni caracteres especiales.';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.urlPattern) {
+            return 'Ingresa una URL válida que empiece con http:// o https://.';
           }
 
           return 'Error de patrón contra expresión regular';

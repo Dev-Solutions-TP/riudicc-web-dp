@@ -1,0 +1,73 @@
+<article
+  class="card h-full border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl"
+>
+
+  <!-- <figure class="flex h-48 items-center justify-center overflow-hidden bg-white p-3 sm:h-52">
+  <div class="flex h-full w-full items-center justify-center overflow-hidden"> -->
+  <figure class="flex h-28 items-center justify-center overflow-hidden bg-white sm:h-32">
+    <div class="flex h-full w-full items-center justify-center overflow-hidden">
+      <img
+        [src]="member().institucion.images | imageNamePipe: 'uni'"
+        [alt]="member().institucion.images?.[0]?.altText || institutionName()"
+        class="h-[240%] w-[240%] max-w-none object-contain"
+        loading="lazy"
+      >
+    </div>
+  </figure>
+
+
+
+  <div class="card-body flex-1 gap-2 p-5">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ cargoName() }}</p>
+    <h2 class="card-title text-lg">{{ member().nombre }}</h2>
+    <p class="text-sm text-base-content/70">
+      {{ institutionName() }}
+      @if (member().institucion.pais) { · {{ member().institucion.pais }} }
+    </p>
+
+    @if (member().correo || member().enlaceContacto) {
+    <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-3">
+      @if (member().correo) {
+      <a
+        class="inline-flex max-w-full items-center gap-2 text-sm text-primary hover:underline"
+        [href]="mailto()"
+      >
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M3 5h18v14H3z" />
+          <path d="m3 6 9 7 9-7" />
+        </svg>
+        <span class="break-all">{{ member().correo }}</span>
+      </a>
+      }
+      @if (member().enlaceContacto) {
+      <a
+        class="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+        [href]="member().enlaceContacto!"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path d="M14 4h6v6" />
+          <path d="M20 4 11 13" />
+          <path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" />
+        </svg>
+        <span>{{ contactLinkText() }}</span>
+      </a>
+      }
+    </div>
+    }
+  </div>
+</article>

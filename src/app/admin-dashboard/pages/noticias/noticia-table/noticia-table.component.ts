@@ -10,7 +10,7 @@ import { AppText } from '@shared/utils/app-text';
 
 @Component({
   selector: 'noticias-table',
-  imports: [RouterLink, DatePipe, ImageNamePipe, TitleCasePipe],
+  imports: [RouterLink, DatePipe, ImageNamePipe],
   templateUrl: './noticia-table.component.html',
 })
 export class ProductTableComponent {

@@ -1,41 +1,36 @@
 <page-title
-    firstWord="Observatory"
-    secondWord=""
+  [firstWord]="title()"
+  [secondWord]="subtitle()"
+  [reverse]="true"
 ></page-title>
 
-<!-- <div class=" max-w-[100rem]   px-4  md:px-20   grid grid-cols-1  lg:grid-cols-2 mt-7 gap-5">
-
-    @if (sociedadResponse.isLoading()) {
-    <div class="flex justify-center items-center h-screen">
-
-        <span class="loading loading-spinner loading-lg"></span>
-    </div>
+<main class="mx-auto max-w-[100rem] px-4 pb-16 md:px-20">
+  @if (members.isLoading()) {
+  <div
+    class="flex min-h-60 items-center justify-center"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <span class="sr-only">Cargando miembros</span>
+  </div>
+  } @else if (members.error()) {
+  <div
+    class="alert alert-error"
+    role="alert"
+  >{{ loadErrorMessage() }}</div>
+  } @else if (members.hasValue()) {
+  @if (members.value().items.length) {
+  <section
+    class="grid grid-cols-1 gap-5 md:grid-cols-2"
+    [attr.aria-label]="title()"
+  >
+    @for (member of members.value().items; track member.id) {
+    <app-observatorio-member-card [member]="member" />
     }
-    @if (sociedadResponse.hasValue()) {
-    @for (proyecto of sociedadResponse.value().items; track $index) {
-
-    <project-card [proyecto]="proyecto"></project-card>
-    }
-    @empty {
-    <p>No data loaded yet.</p>
-    }}
-
-</div> -->
-
-<div class=" max-w-[100rem]   px-4  md:px-20   grid grid-cols-1 ">
-
-    <div class="flex flex-col items-center justify-center min-h-[45vh] text-center gap-5">
-        <h2 class="text-2xl md:text-3xl font-['Roboto'] font-bold text-center mb-4">
-            {{titulo()}}
-        </h2>
-        <p class="text-lg md:text-xl font-['Roboto'] text-center max-w-2xl">
-            {{descripcion()}}
-        </p>
-        <a
-            routerLink="/"
-            class="btn btn-primary btn-wide"
-        >
-            {{ goHomeText() }}
-        </a>
-    </div>
-</div>
+  </section>
+  } @else {
+  <p class="rounded-box bg-base-200 p-6 text-center text-base-content/70">{{ emptyMessage() }}</p>
+  }
+  }
+</main>

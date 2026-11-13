@@ -1,4 +1,4 @@
-<div class="overflow-x-auto">
+<div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
   <table class="table table-zebra">
     <thead>
       <tr>
@@ -11,48 +11,51 @@
     </thead>
     <tbody>
       @for (institucion of insituciones(); track institucion.id) {
-        <tr>
-          <td>
-            <div class="flex items-center gap-3">
-              <div class="avatar">
-                <div class="mask mask-squircle h-12 w-12">
-                  <img
-                    [src]="institucion.images | imageNamePipe: 'uni'"
-                    [alt]="institucion.images[0]"
-                    class="h-12 w-12 object-cover"
-                  />
-                </div>
+      <tr>
+        <td>
+          <div class="flex items-center gap-3">
+            <div class="avatar">
+              <div class="mask mask-squircle h-12 w-12">
+                <img
+                  [src]="institucion.images | imageNamePipe: 'uni'"
+                  [alt]="institucion.images[0]"
+                  class="h-12 w-12 object-cover"
+                />
               </div>
-              <a
-                [routerLink]="['/admin/universidades', institucion.id]"
-                class="font-bold transition-colors duration-300 hover:text-accent"
-              >{{ getTraduccionFrom(institucion).name }}</a>
             </div>
-          </td>
-          <td>{{ institucion.createdAt | date: 'longDate' }}</td>
-          <td>{{ institucion.slug }}</td>
-          <td>
-            <span
-              class="badge"
-              [class.badge-success]="institucion.state === 'active'"
-              [class.badge-error]="institucion.state !== 'active'"
-            >{{ institucion.state === 'active' ? 'Activo' : 'Inactivo' }}</span>
-          </td>
-          <td>
-            <div class="flex flex-wrap justify-end gap-2">
-              <a
-                class="btn btn-sm btn-outline"
-                [routerLink]="['/admin/universidades', institucion.id]"
-              >
-                Editar
-              </a>
-            </div>
-          </td>
-        </tr>
+            <a
+              [routerLink]="['/admin/universidades', institucion.id]"
+              class="font-bold transition-colors duration-300 hover:text-accent"
+            >{{ getTraduccionFrom(institucion).name }}</a>
+          </div>
+        </td>
+        <td>{{ institucion.createdAt | date: 'longDate' }}</td>
+        <td>{{ institucion.slug }}</td>
+        <td>
+          <span
+            class="badge"
+            [class.badge-success]="institucion.state === 'active'"
+            [class.badge-error]="institucion.state !== 'active'"
+          >{{ institucion.state === 'active' ? 'Activo' : 'Inactivo' }}</span>
+        </td>
+        <td>
+          <div class="flex flex-wrap justify-end gap-2">
+            <a
+              class="btn btn-sm btn-outline"
+              [routerLink]="['/admin/universidades', institucion.id]"
+            >
+              Editar
+            </a>
+          </div>
+        </td>
+      </tr>
       } @empty {
-        <tr>
-          <td colspan="5" class="py-10 text-center text-base-content/70">No hay instituciones para mostrar.</td>
-        </tr>
+      <tr>
+        <td
+          colspan="5"
+          class="py-10 text-center text-base-content/70"
+        >No hay instituciones para mostrar.</td>
+      </tr>
       }
     </tbody>
   </table>
