@@ -3,7 +3,7 @@
     <img
       [src]="member().institucion.images | imageNamePipe: 'uni'"
       [alt]="member().institucion.images?.[0]?.altText || institutionName()"
-      class="max-h-full max-w-[90%] object-contain"
+      class="h-full w-full object-contain"
       loading="lazy"
     >
   </figure>
