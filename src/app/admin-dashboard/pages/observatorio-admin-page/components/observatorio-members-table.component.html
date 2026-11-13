@@ -1,55 +1,62 @@
 <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
   @if (members.length) {
-    <table class="table table-zebra">
-      <thead>
-        <tr>
-          <th>Miembro</th>
-          <th>Cargo</th>
-          <th>Institución</th>
-          <th>Periodo</th>
-          <th>Estado</th>
-          <th><span class="sr-only">Acciones</span></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (member of members; track member.id) {
-          <tr>
-            <td>
-              <a
-                class="font-semibold text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                [routerLink]="['/admin/observatorio', member.id]"
-              >{{ member.nombre }}</a>
-              @if (member.correo) {
-                <div class="text-sm text-base-content/65">{{ member.correo }}</div>
-              }
-            </td>
-            <td>{{ cargoName(member) }}</td>
-            <td>{{ institutionName(member) }}</td>
-            <td class="whitespace-nowrap">
-              {{ member.fechaInicio | date:'mediumDate' }} –
-              {{ member.fechaFin ? (member.fechaFin | date:'mediumDate') : 'Actual' }}
-            </td>
-            <td>
-              <span class="badge" [class.badge-success]="member.isActive" [class.badge-ghost]="!member.isActive">
-                {{ member.isActive ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td>
-              <a class="btn btn-ghost btn-sm" [routerLink]="['/admin/observatorio', member.id]">Editar</a>
-              @if (member.isActive) {
-                <button
-                  class="btn btn-ghost btn-sm text-error"
-                  type="button"
-                  [attr.aria-label]="'Finalizar periodo de ' + member.nombre"
-                  (click)="deactivate.emit(member)"
-                >Finalizar</button>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <table class="table table-zebra">
+    <thead>
+      <tr>
+        <th>Miembro</th>
+        <th>Cargo</th>
+        <th>Institución</th>
+        <th>Periodo</th>
+        <th>Estado</th>
+        <th><span class="sr-only">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (member of members; track member.id) {
+      <tr>
+        <td>
+          <a
+            class="font-semibold text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            [routerLink]="['/admin/observatorio', member.id]"
+          >{{ member.nombre }}</a>
+          @if (member.correo) {
+          <div class="text-sm text-base-content/65">{{ member.correo }}</div>
+          }
+        </td>
+        <td>{{ cargoName(member) }}</td>
+        <td>{{ institutionName(member) }}</td>
+        <td class="whitespace-nowrap">
+          {{ member.fechaInicio | date:'mediumDate' }} –
+          {{ member.fechaFin ? (member.fechaFin | date:'mediumDate') : 'Actual' }}
+        </td>
+        <td>
+          <span
+            class="badge"
+            [class.badge-success]="member.isActive"
+            [class.badge-ghost]="!member.isActive"
+          >
+            {{ member.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+        <td>
+          <a
+            class="btn btn-ghost btn-sm"
+            [routerLink]="['/admin/observatorio', member.id]"
+          >Editar</a>
+          @if (member.isActive) {
+          <button
+            class="btn btn-ghost btn-sm text-error"
+            type="button"
+            [attr.aria-label]="'Finalizar periodo de ' + member.nombre"
+            (click)="deactivate.emit(member)"
+          >Finalizar</button>
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
   } @else {
-    <div class="p-8 text-center text-base-content/65">Todavía no hay miembros registrados.</div>
+  <div class="p-8 text-center text-base-content/65">Todavía no hay miembros registrados.</div>
   }
 </div>

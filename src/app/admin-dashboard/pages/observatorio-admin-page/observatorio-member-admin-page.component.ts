@@ -36,13 +36,24 @@ export class ObservatorioMemberAdminPageComponent {
       const id = this.memberId();
       return id ? { id } : undefined;
     },
-    loader: ({ request }) => forkJoin({
-      member: this.service.getMember(request.id),
-      positions: this.service.getPositions(),
-      institutionResponse: this.http.get<{ items: InstitutionOption[] }>(environment.baseUrl + '/instituciones', {
-        params: new HttpParams().set('limit', 100).set('offset', 0),
-      }),
-    }),
+    loader: ({ request }) => {
+      if (!request) {
+        throw new Error('No se recibió el ID del miembro.');
+      }
+
+      return forkJoin({
+        member: this.service.getMember(request.id),
+        positions: this.service.getPositions(),
+        institutionResponse: this.http.get<{ items: InstitutionOption[] }>(
+          environment.baseUrl + '/instituciones',
+          {
+            params: new HttpParams()
+              .set('limit', 100)
+              .set('offset', 0),
+          },
+        ),
+      });
+    },
   });
 
   save(payload: UpdateMemberPayload): void {
