@@ -1,14 +1,14 @@
-<article class="card border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl">
-  <figure class="flex h-36 items-center justify-center overflow-hidden bg-white p-5">
+<article class="card h-full border-l-4 border-primary bg-base-100 shadow-sm transition-shadow duration-300 hover:shadow-xl">
+  <figure class="flex h-48 items-center justify-center overflow-hidden bg-white p-3 sm:h-52">
     <img
       [src]="member().institucion.images | imageNamePipe: 'uni'"
       [alt]="member().institucion.images?.[0]?.altText || institutionName()"
-      class="max-h-full max-w-full object-contain"
+      class="max-h-full max-w-[90%] object-contain"
       loading="lazy"
     >
   </figure>
 
-  <div class="card-body gap-2 p-5">
+  <div class="card-body flex-1 gap-2 p-5">
     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{{ cargoName() }}</p>
     <h2 class="card-title text-lg">{{ member().nombre }}</h2>
     <p class="text-sm text-base-content/70">
@@ -17,10 +17,10 @@
     </p>
 
     @if (member().correo || member().enlaceContacto) {
-    <div class="card-actions mt-3 flex-wrap">
+    <div class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-3">
       @if (member().correo) {
       <a
-        class="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+        class="inline-flex max-w-full items-center gap-2 text-sm text-primary hover:underline"
         [href]="mailto()"
       >
         <svg
@@ -33,16 +33,30 @@
           <path d="M3 5h18v14H3z" />
           <path d="m3 6 9 7 9-7" />
         </svg>
-        <span>{{ member().correo }}</span>
+        <span class="break-all">{{ member().correo }}</span>
       </a>
       }
       @if (member().enlaceContacto) {
       <a
-        class="btn btn-outline btn-sm"
+        class="inline-flex items-center gap-2 text-sm text-primary hover:underline"
         [href]="member().enlaceContacto!"
         target="_blank"
         rel="noopener noreferrer"
-      >{{ contactLinkText() }}</a>
+      >
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path d="M14 4h6v6" />
+          <path d="M20 4 11 13" />
+          <path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" />
+        </svg>
+        <span>{{ contactLinkText() }}</span>
+      </a>
       }
     </div>
     }
