@@ -17,19 +17,34 @@
     </p>
 
     @if (member().correo || member().enlaceContacto) {
-      <div class="card-actions mt-3 flex-wrap">
-        @if (member().correo) {
-          <a class="btn btn-primary btn-sm" [href]="mailto()">{{ contactEmailText() }}</a>
-        }
-        @if (member().enlaceContacto) {
-          <a
-            class="btn btn-outline btn-sm"
-            [href]="member().enlaceContacto!"
-            target="_blank"
-            rel="noopener noreferrer"
-          >{{ contactLinkText() }}</a>
-        }
-      </div>
+    <div class="card-actions mt-3 flex-wrap">
+      @if (member().correo) {
+      <a
+        class="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+        [href]="mailto()"
+      >
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path d="M3 5h18v14H3z" />
+          <path d="m3 6 9 7 9-7" />
+        </svg>
+        <span>{{ member().correo }}</span>
+      </a>
+      }
+      @if (member().enlaceContacto) {
+      <a
+        class="btn btn-outline btn-sm"
+        [href]="member().enlaceContacto!"
+        target="_blank"
+        rel="noopener noreferrer"
+      >{{ contactLinkText() }}</a>
+      }
+    </div>
     }
   </div>
 </article>
