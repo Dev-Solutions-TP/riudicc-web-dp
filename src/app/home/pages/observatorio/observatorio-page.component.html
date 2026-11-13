@@ -1,22 +1,36 @@
-<page-title [firstWord]="title()" [secondWord]="subtitle()"></page-title>
+<page-title
+  [firstWord]="title()"
+  [secondWord]="subtitle()"
+  [reverse]="true"
+></page-title>
 
 <main class="mx-auto max-w-[100rem] px-4 pb-16 md:px-20">
   @if (members.isLoading()) {
-    <div class="flex min-h-60 items-center justify-center" role="status" aria-live="polite">
-      <span class="loading loading-spinner loading-lg text-primary"></span>
-      <span class="sr-only">Cargando miembros</span>
-    </div>
+  <div
+    class="flex min-h-60 items-center justify-center"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <span class="sr-only">Cargando miembros</span>
+  </div>
   } @else if (members.error()) {
-    <div class="alert alert-error" role="alert">{{ loadErrorMessage() }}</div>
+  <div
+    class="alert alert-error"
+    role="alert"
+  >{{ loadErrorMessage() }}</div>
   } @else if (members.hasValue()) {
-    @if (members.value().items.length) {
-      <section class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4" [attr.aria-label]="title()">
-        @for (member of members.value().items; track member.id) {
-          <app-observatorio-member-card [member]="member" />
-        }
-      </section>
-    } @else {
-      <p class="rounded-box bg-base-200 p-6 text-center text-base-content/70">{{ emptyMessage() }}</p>
+  @if (members.value().items.length) {
+  <section
+    class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4"
+    [attr.aria-label]="title()"
+  >
+    @for (member of members.value().items; track member.id) {
+    <app-observatorio-member-card [member]="member" />
     }
+  </section>
+  } @else {
+  <p class="rounded-box bg-base-200 p-6 text-center text-base-content/70">{{ emptyMessage() }}</p>
+  }
   }
 </main>

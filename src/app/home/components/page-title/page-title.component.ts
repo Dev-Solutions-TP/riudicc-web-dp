@@ -9,4 +9,6 @@ export class PageTitleComponent {
 
   firstWord = input<string>();
   secondWord = input<string>();
+
+  reverse = input<boolean>(false);
 }

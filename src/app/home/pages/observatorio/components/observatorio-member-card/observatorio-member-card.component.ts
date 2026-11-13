@@ -42,6 +42,7 @@ export class ObservatorioMemberCardComponent {
   private readonly emailBody = this.localization.getText(AppText.observatorio.emailBody);
 
   mailto(): string {
+    console.log("Corrrero");
     const member = this.member();
     const subject = encodeURIComponent(this.emailSubject());
     const body = encodeURIComponent(this.emailBody());
