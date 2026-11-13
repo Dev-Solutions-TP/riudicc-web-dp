@@ -4,14 +4,14 @@
   (ngSubmit)="submit()"
 >
   <section class="rounded-box border border-base-300 bg-base-100 p-5">
-    <h2 class="text-lg font-bold">Datos del miembro</h2>
+    <h2 class="text-lg font-bold">{{ text.details() }}</h2>
     <div class="mt-3 grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2">
       <div class="form-control">
         <label
           class="label"
           for="edit-member-name"
         >
-          <span class="label-text font-semibold">Nombre completo <span class="text-error">*</span></span>
+          <span class="label-text font-semibold">{{ text.fullName() }} <span class="text-error">*</span></span>
         </label>
         <input
           id="edit-member-name"
@@ -19,16 +19,14 @@
           formControlName="nombre"
           autocomplete="name"
         >
-        @if (form.controls.nombre.touched && form.controls.nombre.hasError('required')) {
-        <span class="mt-1 text-sm text-error">El nombre es obligatorio.</span>
-        }
+        <form-error-label [control]="form.controls.nombre" />
       </div>
 
       <div class="form-control">
         <label
           class="label"
           for="edit-member-email"
-        ><span class="label-text font-semibold">Correo electrónico</span></label>
+        ><span class="label-text font-semibold">{{ text.email() }}</span></label>
         <input
           id="edit-member-email"
           class="input input-bordered w-full"
@@ -36,23 +34,22 @@
           formControlName="correo"
           autocomplete="email"
         >
-        @if (form.controls.correo.touched && form.controls.correo.hasError('email')) {
-        <span class="mt-1 text-sm text-error">Escribe un correo válido.</span>
-        }
+        <form-error-label [control]="form.controls.correo" />
       </div>
 
       <div class="form-control">
         <label
           class="label"
           for="edit-member-contact"
-        ><span class="label-text font-semibold">Enlace de contacto</span></label>
+        ><span class="label-text font-semibold">{{ text.contact() }}</span></label>
         <input
           id="edit-member-contact"
           class="input input-bordered w-full"
           type="url"
           formControlName="enlaceContacto"
-          placeholder="https://"
+          [placeholder]="text.contactPlaceholder()"
         >
+        <form-error-label [control]="form.controls.enlaceContacto" />
       </div>
 
       <div class="form-control">
@@ -60,7 +57,7 @@
           class="label"
           for="edit-member-position"
         >
-          <span class="label-text font-semibold">Cargo <span class="text-error">*</span></span>
+          <span class="label-text font-semibold">{{ text.position() }} <span class="text-error">*</span></span>
         </label>
         <select
           id="edit-member-position"
@@ -71,6 +68,7 @@
           <option [value]="position.id">{{ cargoName(position) }}</option>
           }
         </select>
+        <form-error-label [control]="form.controls.cargoId" />
       </div>
 
       <div class="form-control md:col-span-2">
@@ -78,7 +76,7 @@
           class="label"
           for="edit-member-institution"
         >
-          <span class="label-text font-semibold">Institución <span class="text-error">*</span></span>
+          <span class="label-text font-semibold">{{ text.institution() }} <span class="text-error">*</span></span>
         </label>
         <select
           id="edit-member-institution"
@@ -89,16 +87,17 @@
           <option [value]="institution.id">{{ institutionName(institution) }}</option>
           }
         </select>
+        <form-error-label [control]="form.controls.institucionId" />
       </div>
     </div>
   </section>
 
   <section class="rounded-box border border-base-300 bg-base-100 p-5">
-    <h2 class="text-lg font-bold">Periodo</h2>
+    <h2 class="text-lg font-bold">{{ text.period() }}</h2>
     <p class="mt-2 text-sm text-base-content/70">
-      Estado: <span class="font-semibold">{{ member.isActive ? 'Activo' : 'Inactivo' }}</span>
-      · Inicio: {{ member.fechaInicio | date:'mediumDate' }}
-      @if (member.fechaFin) { · Fin: {{ member.fechaFin | date:'mediumDate' }} }
+      {{ text.status() }}: <span class="font-semibold">{{ member.isActive ? text.active() : text.inactive() }}</span>
+      · {{ text.start() }}: {{ member.fechaInicio | date:'mediumDate' }}
+      @if (member.fechaFin) { · {{ text.end() }}: {{ member.fechaFin | date:'mediumDate' }} }
     </p>
   </section>
 
@@ -109,7 +108,7 @@
       [disabled]="saving || form.invalid"
     >
       @if (saving) { <span class="loading loading-spinner loading-sm"></span> }
-      Guardar cambios
+      {{ text.save() }}
     </button>
   </div>
 </form>

@@ -3,6 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
+import { AlertMessageComponent } from '@dashboard/components/alert-message/alert-message.component';
+import { LocalizationService } from '@shared/services/localization.service';
+import { AppText } from '@shared/utils/app-text';
 import { environment } from 'src/environments/environment';
 import { ObservatorioCargo } from '@home/pages/observatorio/observatorio.interface';
 import { ObservatorioService } from '@home/pages/observatorio/observatorio.service';
@@ -15,7 +18,7 @@ import {
 @Component({
   selector: 'app-observatorio-member-admin-page',
   standalone: true,
-  imports: [ObservatorioMemberDetailsComponent, RouterLink],
+  imports: [ObservatorioMemberDetailsComponent, RouterLink, AlertMessageComponent],
   templateUrl: './observatorio-member-admin-page.component.html',
 })
 export class ObservatorioMemberAdminPageComponent {
@@ -23,6 +26,16 @@ export class ObservatorioMemberAdminPageComponent {
   private readonly router = inject(Router);
   private readonly service = inject(ObservatorioService);
   private readonly http = inject(HttpClient);
+  private readonly localization = inject(LocalizationService);
+
+  readonly text = {
+    back: this.localization.getText(AppText.observatorio.adminBack),
+    editTitle: this.localization.getText(AppText.observatorio.adminEditTitle),
+    member: this.localization.getText(AppText.observatorio.adminMember),
+    loading: this.localization.getText(AppText.observatorio.adminLoading),
+    loadError: this.localization.getText(AppText.observatorio.adminLoadError),
+    saveError: this.localization.getText(AppText.observatorio.adminSaveError),
+  };
 
   readonly memberId = toSignal(
     this.route.paramMap.pipe(map(params => params.get('id') ?? '')),
@@ -65,7 +78,10 @@ export class ObservatorioMemberAdminPageComponent {
     this.service.saveMember(payload, id).subscribe({
       next: () => this.router.navigate(['/admin/observatorio']),
       error: err => {
-        this.actionError.set(err?.error?.message ?? 'No se pudieron guardar los cambios.');
+        const message = err?.error?.message;
+        this.actionError.set(
+          Array.isArray(message) ? message.join('. ') : message ?? this.text.saveError(),
+        );
         this.saving.set(false);
       },
       complete: () => this.saving.set(false),
